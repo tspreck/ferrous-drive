@@ -57,6 +57,8 @@ The project focuses on:
 - Controller-independent architecture
 - Community-driven development
 
+# Development Loop
+
 ```mermaid
 flowchart LR
     A[Assumptions 🔍]
@@ -79,10 +81,6 @@ Every ride teaches something.
 Every lesson becomes an assumption.
 
 Every assumption gets tested before becoming trusted.
-
----
-
-# Development Loop
 
 ```mermaid
 flowchart LR
