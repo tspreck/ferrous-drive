@@ -28,11 +28,11 @@ flowchart LR
     C --> A
 ```
 
-**The rider provides effort**
+**> _**The rider provides effort**_
 
-**The controller provides support**
+> _**The controller provides support**_
 
-**The road provides feedback**
+> _**The road provides feedback**_**
 
 
 
