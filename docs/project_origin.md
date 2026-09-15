@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-Ferrous Drive started as a personal Rust learning project and an experiment in making e-bike assistance more rider-aware, transparent, and testable.
+Ferrous Drive started as a personal Rust learning project and an experiment in designing an e-bike motor controller who's assistance is more rider-aware, transparent, and testable. I am a passionate daily sports commuter and want to DIY design and build a system that matches my needs.
 
 The original idea was to run a Rust control core on an ESP32, using a Cycle Analyst V3 to pass assistance requests to a Baserunner controller. Early reviews showed that the harder problems were not PWM generation or hardware integration, but deciding when telemetry could be trusted, explaining why assistance decisions were made, and validating behaviour without testing every change on a moving bike.
 
