@@ -1,218 +1,58 @@
 # Ferrous Drive 🚲🦀⚙️
 
-> Safety-oriented, simulation-first e-bike control software written in Rust.
+[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.icense](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)
+[![Status](https://img.shields.io/elopment-yellow](docs/roadmap.md)
+[![Philosophy](https://img.shields.io/badge/Philosophy-Simulation%20First-admap.md)
+[![Roadmap](https://img.shields.io/badge/Roadmap-Active-roadmap.md)
+[![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](../![Contributions Welcome](https://img.shields.io/badge/Contributions-IBUTING.md)
+
+> Safety-oriented Rust e-bike control software built around simulation, validation, and controller-independent design.
 
 Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control.
 
 The project focuses on:
 
-- Safe and predictable assist behaviour
-- Simulation before hardware
-- Controller-independent architecture
+- Safety-first control design
+- Replayable simulation
 - Fault-tolerant telemetry handling
 - Explainable assist decisions
+- Controller-independent architecture
 - Community-driven development
 
 The long-term goal is to create a reusable Rust foundation for e-bike control systems that can be validated on a laptop before ever reaching a moving vehicle.
 
-> ⚠️ Early Development
+> ⚠️ **Early Development**
 >
 > Ferrous Drive is currently focused on architecture, simulation, validation, and hardware abstraction.
 >
-> Hardware integration and controller support are still under investigation.
+> Hardware integration and controller support remain future milestones.
 
 ---
 
-# Why Ferrous Drive?
-
-Most DIY e-bike projects start with firmware and hardware.
-
-Ferrous Drive intentionally starts somewhere else:
-
-```text
-Understand It
-    ↓
-Simulate It
-    ↓
-Validate It
-    ↓
-Ride It
-```
-
-The project aims to reduce experimentation on real hardware by moving as much engineering work as possible into deterministic simulation and replay.
-
----
-
-# Development Philosophy
+# Project Philosophy
 
 ```mermaid
 flowchart LR
-    A[Understand] --> B[Simulate]
-    B --> C[Validate]
-    C --> D[Ride]
+    A[Assumptions 🔍]
+    B[Design 📐]
+    C[Simulate 🎮]
+    D[Validate ✅]
+    E[Build ⚙️]
+    F[Ride 🚲]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> A
 ```
 
----
+Every ride teaches something.
 
-# Project Journey
+Every lesson becomes an assumption.
 
-```mermaid
-flowchart LR
-    A[Idea 💡] --> B[Architecture 📐]
-    B --> C[Assumptions 🔍]
-    C --> D[Validation ✅]
-    D --> E[Telemetry Trust 📡]
-    E --> F[Simulation 🎮]
-    F --> G[Controller Interface ⚙️]
-    G --> H[Bench Testing 🧪]
-    H --> I[First Ride 🚲]
-```
-
----
-
-# Current Architecture
-
-```text
-Telemetry
-    ↓
-Telemetry Trust Model
-    ↓
-Motion State Machine
-    ↓
-Constraint Engine
-    ↓
-Assist Decision
-    ↓
-Motor Request
-    ↓
-Controller Driver
-```
-
-The core intentionally separates:
-
-- Telemetry acquisition
-- State management
-- Constraint handling
-- Motor controller integration
-
-This keeps the control system portable between different hardware platforms.
-
----
-
-# Design Principles
-
-## Safety First
-
-Ferrous Drive should always favour predictable behaviour over aggressive behaviour.
-
-## Simulation Before Hardware
-
-Controller behaviour should be validated in simulation before it reaches a live bike.
-
-## Explainable Decisions
-
-Every assist request should be traceable back to the telemetry and constraints that produced it.
-
-## Controller Independence
-
-The core should not care whether it eventually communicates with:
-
-- Baserunner
-- VESC
-- Future controller platforms
-
-## Graceful Degradation
-
-Sensor failures should degrade predictably rather than cause undefined behaviour.
-
----
-
-# Engineering Confidence Pyramid
-
-```text
-            🚲 ROAD TESTED
-                  ▲
-
-             🧪 BENCH TESTED
-                  ▲
-
-              🎮 SIMULATED
-                  ▲
-
-               📐 DESIGNED
-                  ▲
-
-                💡 IDEA
-```
-
-Every major feature should climb this pyramid before being considered trusted.
-
----
-
-# Current Roadmap
-
-## Phase 0 · Project Foundation ✅
-
-- Repository created
-- Vision established
-- Initial architecture documented
-- Initial requirements defined
-- Change tracking established
-- First project issues created
-
-## Phase 1 · Engineering Foundations 🚧
-
-Current focus:
-
-- Project origin documentation
-- Assumptions register
-- Validation matrix
-- Telemetry trust model
-
-## Phase 2 · Simulation First
-
-Upcoming:
-
-- Replay simulator foundation
-- GPX / telemetry replay
-- Decision tracing
-- Regression testing
-
-## Phase 3 · Controller Abstraction
-
-Upcoming:
-
-- Controller interface definition
-- Telemetry abstraction
-- Health monitoring
-
-## Phase 4 · Controller Research
-
-Upcoming:
-
-- Direct Baserunner communication investigation
-- Protocol review
-- Hardware capability validation
-
-See the full roadmap in:
-
-```text
-docs/roadmap.md
-```
-
----
-
-# Current Open Questions
-
-Some important design assumptions are intentionally being tracked and challenged early:
-
-- Can a Baserunner be controlled directly and safely?
-- What telemetry is truly required?
-- How should stale data be handled?
-- Can simulation catch most control-law issues?
-- Which parts of the system must be fail-safe?
-
-The goal is to replace assumptions with evidence over time.
+Every assumption gets tested before becoming trusted.
 
 ---
 
@@ -233,41 +73,156 @@ flowchart LR
     E --> B
 ```
 
+The goal is simple:
+
+```text
+Understand It
+    ↓
+Simulate It
+    ↓
+Validate It
+    ↓
+Ride It
+```
+
+---
+
+# Current Architecture
+
+```text
+Telemetry
+    ↓
+Telemetry Trust Model
+    ↓
+Motion State Machine
+    ↓
+Constraint Handling
+    ↓
+Assist Decision
+    ↓
+Motor Request
+    ↓
+Controller Driver
+```
+
+The core intentionally separates:
+
+- Telemetry acquisition
+- State management
+- Constraint handling
+- Motor controller integration
+
+This keeps the control system portable between different hardware platforms.
+
+---
+
+# Current Focus
+
+Current work is centred around:
+
+- Repository Foundation & Project Origin
+- Engineering Assumptions Register
+- Validation Matrix
+- Telemetry Trust Model
+- Replay Simulator Foundation
+
+See the full roadmap:
+
+📍 docs/roadmap.md
+
+---
+
+# Quick Links
+
+📍 docs/roadmap.md
+
+📖 docs/project_origin.md
+
+🧠 docs/11_assumptions.md
+
+✅ docs/10_validation_matrix.md
+
+📐 docs/decision_log.md
+
+🐛 ../../issues
+
+🤝 CONTRIBUTING.md
+
+📋 CHANGELOG.md
+
 ---
 
 # Project Status
 
-Ferrous Drive is currently exploring:
+✅ Repository Created
 
-✅ Architecture
+✅ Initial Architecture Defined
 
-✅ Requirements
+✅ Requirements Captured
 
-✅ Project governance
+✅ Decision Trail Started
 
-✅ Safety thinking
+✅ Development Roadmap Defined
 
-🚧 Telemetry trust model
+🚧 Engineering Foundations
 
-🚧 Validation framework
+🚧 Telemetry Trust Model
 
-🚧 Replay simulation
+🚧 Replay Simulation
 
-⏳ Controller abstraction
+⏳ Controller Abstraction
 
-⏳ Hardware integration
+⏳ Hardware Validation
 
-⏳ Bench testing
-
-⏳ Ride testing
+⏳ First Rolling Prototype
 
 ---
 
-# Documentation
+# Contributing
 
-| Document | Purpose |
-|-----------|----------|
-| docs/roadmap.md | Project roadmap |
-| docs/project_origin.md | How the project started |
-| docs/decision_log.md | Major design decisions |
-| docs/assumptions.md | Engineering
+Contributions are welcome.
+
+Examples include:
+
+- Rust development
+- Simulation tooling
+- Testing
+- Documentation
+- E-bike controller research
+- Ride data analysis
+
+Before proposing major architectural changes, please review:
+
+- Project Origin
+- Roadmap
+- Assumptions Register
+- Decision Log
+
+Understanding *why* something exists is often more valuable than immediately changing it.
+
+---
+
+# License
+
+Dual licensed under:
+
+- MIT
+- Apache-2.0
+
+at your option.
+
+---
+
+# Project Mantra
+
+```text
+Understand It
+    ↓
+Simulate It
+    ↓
+Validate It
+    ↓
+Ride It
+```
+
+**Build confidence first. Build firmware second.**
