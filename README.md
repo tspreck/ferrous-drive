@@ -1,6 +1,6 @@
 # Ferrous Drive 🚲🦀⚙️
 
-[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/) [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE) [![Status](https://img.shields.io/badge/Status-Early%20Development-yellow)](docs/roadmap.md) [![Roadmap](https://img.shields.io/badge/Roadmap-Active-green)](docs/roadmap.md) [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](https://github.com/tspreck/ferrous-drive/issues)
+[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/)     [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)     [![Status](https://img.shields.io/badge/Status-Early%20Development-yellow)](docs/roadmap.md)     [![Roadmap](https://img.shields.io/badge/Roadmap-Active-green)](docs/roadmap.md)     [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](https://github.com/tspreck/ferrous-drive/issues)
 
 > Rider-oriented **Rust** e-bike control software built around simulation, validation, and controller-independent design.
 Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control.
