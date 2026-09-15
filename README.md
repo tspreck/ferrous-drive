@@ -29,7 +29,9 @@ flowchart LR
 ```
 
 **The rider provides effort**
+
 **The controller provides support**
+
 **The road provides feedback**
 
 
