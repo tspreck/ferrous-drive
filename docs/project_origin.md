@@ -2,7 +2,7 @@
 
 # Project Origin
 
-****> _Measure effort > > > Preserve momentum > > > Learn from every ride_****
+> _Measure effort > > > Preserve momentum > > > Learn from every ride_
 
 **Estimated reading time:** 10 minutes
 
