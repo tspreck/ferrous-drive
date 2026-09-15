@@ -10,9 +10,7 @@ Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsio
 
 # Project Mantra
 
-### Measure effort.  
-### Preserve momentum..  
-### Learn from every ride...
+**> _Measure effort. Preserve momentum. Learn from every ride._**
 
 
 Ferrous Drive is not a motor controller.
