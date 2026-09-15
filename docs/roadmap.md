@@ -288,14 +288,3 @@ Ferrous Drive aims to become an open-source, controller-independent Rust e-bike 
 
 ---
 
-# Project Mantra
-
-```text
-Understand It
-    ↓
-Simulate It
-    ↓
-Validate It
-    ↓
-Ride It
-```
