@@ -1,10 +1,11 @@
 # Ferrous Drive 🚲🦀⚙️
 
-[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.icense](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)
-[![Status](https://img.shields.io/elopment-yellow](docs/roadmap.md)
-[![Philosophy](https://img.shields.io/badge/Philosophy-Simulation%20First-admap.md)
+[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/)
+[![License](https:lds.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)
+[![Status](adge/Status-Early%20Development-yellow](docs/roadmap.md)
+[![Philosophy](https://img.shields.io/badge/Philosophyirst-purple](docs/roadmap.md)
 [![Roadmap](https://img.shields.io/badge/Roadmap-Active-roadmap.md)
-[![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](../![Contributions Welcome](https://img.shields.io/badge/Contributions-IBUTING.md)
+[![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](../![Contributions](https://img.shieldstions-Welcome-brightgreen](CONTRIBUTING.md)
 
 > Rider-oriented **rust** e-bike control software built around simulation, validation, and controller-independent design.
 
