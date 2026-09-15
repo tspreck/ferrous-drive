@@ -36,15 +36,6 @@ flowchart LR
 
 
 
-The project focuses on:
-
-- Safety-first control design
-- Replayable simulation
-- Fault-tolerant telemetry handling
-- Explainable assist decisions
-- Controller-independent architecture
-- Community-driven development
-
 The long-term goal is to create a reusable Rust foundation for e-bike control systems that can be validated on a laptop before ever reaching a moving vehicle.
 
 > ⚠️ **Early Development**
@@ -56,6 +47,15 @@ The long-term goal is to create a reusable Rust foundation for e-bike control sy
 ---
 
 # Project Philosophy
+
+The project focuses on:
+
+- Safety-first control design
+- Replayable simulation
+- Fault-tolerant telemetry handling
+- Explainable assist decisions
+- Controller-independent architecture
+- Community-driven development
 
 ```mermaid
 flowchart LR
