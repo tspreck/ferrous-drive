@@ -194,9 +194,8 @@ Understanding *why* something exists is often more valuable than immediately cha
 
 # License
 
-Dual licensed under:
+Licensed under:
 
-- MIT
 - Apache-2.0
 
 at your option.
