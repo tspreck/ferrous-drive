@@ -6,9 +6,35 @@
 [![Roadmap](https://img.shields.io/badge/Roadmap-Active-roadmap.md)
 [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](../![Contributions Welcome](https://img.shields.io/badge/Contributions-IBUTING.md)
 
-> Safety-oriented Rust e-bike control software built around simulation, validation, and controller-independent design.
+> Rider-oriented **rust** e-bike control software built around simulation, validation, and controller-independent design.
 
 Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control.
+
+# Project Mantra
+
+### Measure effort.  
+### Preserve momentum.  
+### Learn from every ride.
+
+Ferrous Drive is not a motor controller.
+
+It is a feedback system that helps riders maintain momentum, protects the machine from unnecessary stress, and continuously learns from the outcomes of its decisions.
+
+```mermaid
+flowchart LR
+    A[Rider Effort 🚴]
+    B[Ferrous Drive ⚙️]
+    C[Road Feedback 🛣️]
+
+    A --> B
+    B --> C
+    C --> A
+```
+
+**The rider provides effort**
+**The controller provides support**
+**The road provides feedback**
+
 
 The project focuses on:
 
@@ -212,27 +238,3 @@ Dual licensed under:
 at your option.
 
 ---
-
-# Project Mantra
-
-### Measure effort.  
-### Preserve momentum.  
-### Learn from every ride.
-
-Ferrous Drive is not a motor controller.
-
-It is a feedback system that helps riders maintain momentum, protects the machine from unnecessary stress, and continuously learns from the outcomes of its decisions.
-
-```mermaid
-flowchart LR
-    A[Rider Effort 🚴]
-    B[Ferrous Drive ⚙️]
-    C[Road Feedback 🛣️]
-
-    A --> B
-    B --> C
-    C --> A
-```
-
-**The rider provides effort <---> The controller provides support <---> The road provides feedback.**
-
