@@ -215,14 +215,24 @@ at your option.
 
 # Project Mantra
 
-```text
-Understand It
-    ↓
-Simulate It
-    ↓
-Validate It
-    ↓
-Ride It
+### Measure effort.  
+### Preserve momentum.  
+### Learn from every ride.
+
+Ferrous Drive is not a motor controller.
+
+It is a feedback system that helps riders maintain momentum, protects the machine from unnecessary stress, and continuously learns from the outcomes of its decisions.
+
+```mermaid
+flowchart LR
+    A[Rider Effort 🚴]
+    B[Ferrous Drive ⚙️]
+    C[Road Feedback 🛣️]
+
+    A --> B
+    B --> C
+    C --> A
 ```
 
-**Build confidence first. Build firmware second.**
+**The rider provides effort <---> The controller provides support <---> The road provides feedback.**
+
