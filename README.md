@@ -145,11 +145,10 @@ Examples include:
 
 Before proposing major architectural changes, please review:
 
-- Project Origin
-- Roadmap
-- Assumptions Register
-- Decision Log
-
+- 📜 [Project Origin]docs/project_origin.md
+- 📐 [Archiecture]docs/architecture.md
+- 🧠 [Assumptions]docs/assumptions.md
+- 
 Understanding *why* something exists is often more valuable than immediately changing it.
 
 ---
