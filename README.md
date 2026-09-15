@@ -127,44 +127,6 @@ This keeps the control system portable between different hardware platforms.
 
 ---
 
-# Current Focus
-
-Current work is centred around:
-
-- Repository Foundation & Project Origin
-- Engineering Assumptions Register
-- Validation Matrix
-- Telemetry Trust Model
-- Replay Simulator Foundation
-
----
-
-# Project Status
-
-✅ Repository Created
-
-✅ Initial Architecture Defined
-
-✅ Requirements Captured
-
-✅ Decision Trail Started
-
-✅ Development Roadmap Defined
-
-🚧 Engineering Foundations
-
-🚧 Telemetry Trust Model
-
-🚧 Replay Simulation
-
-⏳ Controller Abstraction
-
-⏳ Hardware Validation
-
-⏳ First Rolling Prototype
-
----
-
 # Contributing
 
 Contributions are welcome.
