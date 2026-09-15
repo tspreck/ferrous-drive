@@ -12,21 +12,21 @@ The architecture separates telemetry acquisition, trust evaluation, assist calcu
 
 ## Table of Contents
 
-- #overview
-- #design-principles
-- #system-overview
-- #runtime-control-flow
-- #motion-state-machine
-- #telemetry-trust-model
-- #constraint-architecture
-- #simulation-architecture
-- #controller-abstraction
-- #target-hardware-architecture
-- #engineering-feedback-loop
-- #known-unknowns
-- #non-goals
-- #long-term-vision
-- #project-mantra
+- [Overview](#
+- [design-principles](#
+- [system-overview](#
+- [runtime-control-flow](#
+- [motion-state-machine](#
+- [telemetry-trust-model](#
+- [constraint-architecture](#
+- [simulation-architecture](#
+- [controller-abstraction](#
+- [target-hardware-architecture](#
+- [engineering-feedback-loop](#
+- [known-unknowns](#
+- [non-goals](#
+- [long-term-vision](#
+- [project-mantra](#
 
 ---
 
