@@ -32,6 +32,39 @@ Controller Driver
 Motor Controller
 ```
 
+## Architecture Status
+
+| Area | Status |
+|--------|--------|
+| System Architecture | Draft |
+| Telemetry Trust Model | In Design |
+| Simulation Architecture | Draft |
+| Controller Abstraction | Draft |
+| Baserunner Integration | Under Investigation |
+| Hardware Deployment | Not Started |
+
+Architecture reflects the current understanding of the project and will evolve as assumptions are validated.
+
+---
+
+## Architecture Boundaries
+
+Ferrous Drive is responsible for:
+
+- Telemetry evaluation
+- Ride-state modelling
+- Constraint handling
+- Assist decision generation
+- Simulation and replay
+
+Ferrous Drive is not responsible for:
+
+- Battery management
+- Motor commutation
+- Hardware safety circuits
+- Controller firmware internals
+- Autonomous riding decisions
+
 ---
 
 ## Design Principles
@@ -256,4 +289,15 @@ Controller-specific logic belongs in drivers, not in the control core.
 
 ---
 
-## Target Hardware Architecture
+## Future Architecture Candidates
+
+The following areas may introduce architectural changes:
+
+- Direct Baserunner integration
+- VESC support
+- Wireless sensor integration
+- Physics-based range estimation
+- Ride profile management
+- Energy optimization strategies
+
+These remain exploratory and are intentionally excluded from the current architecture until sufficient evidence exists.
