@@ -1,7 +1,6 @@
 # Ferrous Drive 🚲🦀⚙️
 
-[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)]
-(https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badgeIT%20OR%20Apache--2.0-blue)](LICENSE)
 [![Status/badge/Status-Early%20Development-yellow]
 [![Philosophy](https://img.shields.io/badge/Philosophy-Simulation%20First-purple)](docs/roadmap.md)
