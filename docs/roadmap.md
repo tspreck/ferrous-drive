@@ -1,5 +1,30 @@
 # Ferrous Drive Roadmap
 
+# Project Status
+
+✅ Repository Created
+
+✅ Initial Architecture Defined
+
+✅ Requirements Captured
+
+✅ Decision Trail Started
+
+✅ Development Roadmap Defined
+
+🚧 Engineering Foundations
+
+🚧 Telemetry Trust Model
+
+🚧 Replay Simulation
+
+⏳ Controller Abstraction
+
+⏳ Hardware Validation
+
+⏳ First Rolling Prototype
+
+---
 Ferrous Drive is being built from the ground up with a strong focus on safety, simulation, validation, and maintainability.
 
 Before targeting hardware, the project will establish confidence in its assumptions, telemetry handling, control architecture, and validation workflows.
