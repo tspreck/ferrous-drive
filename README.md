@@ -47,9 +47,9 @@ The project aims to reduce experimentation on real hardware by moving as much en
 
 ```mermaid
 flowchart LR
-    A[Understand It] --> B[Simulate It]
-    B --> C[Validate It]
-    C --> D[Ride It]
+    A[Understand] --> B[Simulate]
+    B --> C[Validate]
+    C --> D[Ride]
 ```
 
 ---
