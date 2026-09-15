@@ -2,7 +2,7 @@
 
 # Architecture
 
-> Measure effort. Preserve momentum. Learn from every ride.
+> _Measure effort. Preserve momentum. Learn from every ride._
 
 Ferrous Drive is a simulation-first, controller-independent Rust platform for e-bike propulsion control.
 
