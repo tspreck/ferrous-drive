@@ -270,4 +270,4 @@ Ferrous Drive is currently exploring:
 | docs/roadmap.md | Project roadmap |
 | docs/project_origin.md | How the project started |
 | docs/decision_log.md | Major design decisions |
-| docs/11_assumptions.md | Engineering
+| docs/assumptions.md | Engineering
