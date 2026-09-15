@@ -1,4 +1,4 @@
-> 📚 [README](../README.md) · 🗺️ [Roadmap](roadmap.md) · 📐 ure](architecture.md) · 🧠 assumptions.md · ✅ validation_matrix.md · 📜 decision_log.md
+> 📚 [README](../README.md) · 🗺️ [Roadmap](roadmap.md) · 📐 [Architecture](architecture.md) · 🧠 assumptions.md · ✅ validation_matrix.md · 📜 decision_log.md
 
 # Project Origin
 
