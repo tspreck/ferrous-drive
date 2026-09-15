@@ -4,7 +4,6 @@
 
 ****> _Measure effort > > > Preserve momentum > > > Learn from every ride_****
 
-
 Ferrous Drive is a simulation-first, controller-independent Rust platform for e-bike propulsion control.
 
 The architecture separates telemetry acquisition, trust evaluation, assist calculation, constraint handling, simulation, and hardware integration so that control logic can be developed and validated independently of any specific motor controller.
