@@ -99,18 +99,6 @@ flowchart LR
     E --> B
 ```
 
-The goal is simple:
-
-```text
-Understand It
-    ↓
-Simulate It
-    ↓
-Validate It
-    ↓
-Ride It
-```
-
 ---
 
 # Current Architecture
@@ -151,30 +139,6 @@ Current work is centred around:
 - Validation Matrix
 - Telemetry Trust Model
 - Replay Simulator Foundation
-
-See the full roadmap:
-
-📍 docs/roadmap.md
-
----
-
-# Quick Links
-
-📍 docs/roadmap.md
-
-📖 docs/project_origin.md
-
-🧠 docs/11_assumptions.md
-
-✅ docs/10_validation_matrix.md
-
-📐 docs/decision_log.md
-
-🐛 ../../issues
-
-🤝 CONTRIBUTING.md
-
-📋 CHANGELOG.md
 
 ---
 
