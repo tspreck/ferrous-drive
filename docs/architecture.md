@@ -8,7 +8,7 @@ The architecture separates telemetry acquisition, trust evaluation, assist calcu
 
 # Table of Contents
 
-- #overview
+- #Overview
 - #design-principles
 - #system-overview
 - #runtime-control-flow
