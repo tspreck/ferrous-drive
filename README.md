@@ -1,11 +1,14 @@
 # Ferrous Drive 🚲🦀⚙️
 
-(https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/)e](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)
-(https:/atus-Early%20Development-yellow](docs/roadmap.md)
-[![Philosmg.shields.io/badge/Philosophy-Simulation%20First-purple](docs/roadmap.md)
-[![Roadmapg.shields.io/badge/Roadmap-Active-green](docs/roadmap.md)
-[![Issues](https://img.shields.io/github/issues/tspreck/ve](https://github.com/tspreck/ferrous-drive/issues)
-https://img.shields.io/badge/Contributions-Welcome-brightgreen](CONTRIBUTING.md)
+[![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)]
+(https://www.rust-lang.org/)
+[![License](httpselds.io/badge/License-MIT%20OR%20Apache--2.0-blue)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Early%20Development)
+https://img.shields.io/badge/Philosophy-Simulation%20First-purple](docs/roadmap.md)
+[![Road/img.shields.io/badge/Roadmap-Active-green](docs/roadmap.md)
+[![Issues](https://img.shields.io/github/issues/rous-drive]
+(https://github.com/tspreck/ferrous-drive/issues)
+[![Contributions](https://img.shields.io/s-Welcome-brightgreen](CONTRIBUTING.md)
 
 > Rider-oriented **Rust** e-bike control software built around simulation, validation, and controller-independent design.
 Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control.
