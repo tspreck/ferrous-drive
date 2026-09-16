@@ -143,22 +143,61 @@ flowchart LR
 
 ## Motion State Machine
 
-Motion state models what the rider and bicycle are doing.
+The state machine models rider motion.
 
-Brake state models what the rider is demanding.
+Braking is treated as a safety override because it immediately suppresses motor assistance regardless of the current motion state.
 
-Brake signals therefore participate in
-constraint arbitration rather than
-motion-state identity.
+Current motion states:
 
-It deliberately does **not** represent:
+```text
+Stationary
+Launching
+Cruising
+Coasting
+```
 
-- Thermal limits
-- Battery limits
-- Speed limits
-- Communication failures
+### State Diagram
 
-Those belong in the constraint layer.
+```mermaid
+stateDiagram-v2
+
+    [*] --> Stationary
+
+*  *Stationary --> Launching : Pedalli*g Begins
+
+   *Launch*ng --> Cruising : Stable Motion
+
+*  *Cruising --> Coasting : Pedalling *tops
+
+*   Coasting --> Cruising : Pedalli*g Resumes
+
+   *Co*sting --> Stationary : Speed Appro*ches Zero
+
+*  *Launching --> Stationary : Rider S*ops
+
+   *Launching --> Braking : Brake Appl*ed
+    Cruising --> Braking : Brak* Applied
+   *Co*sting --> Braking : Brake Applied
+**  *Braking --> Stationary : Vehicle S*ops
+*  *Braking --> Coasting : Brake Relea*ed While Rolling
+```
+
+### Architec*ural Note
+
+Although*shown*in the diagram, `Braking` is not i*tended to participate in assist ca*culations in the same way as norma* ride states.
+
+*he*purpose of the braking state is to*model rider intent and visualize s*stem behaviour.
+
+*ny*active brake signal should be trea*ed as the highest-priority constra*nt and force the final motor reque*t to zero regardless of:
+
+- Curren* ride profile
+- Requested assistan*e
+-*Motion*state
+- Sensor inputs
+
+Concept*ally*
+
+*``*
 
 ```mermaid
 flowchart TD
