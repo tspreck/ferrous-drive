@@ -175,11 +175,11 @@ stateDiagram-v2
 
     Launching --> Stationary : Rider Stops
 
-    Launching --> Braking : Brake Appl*ed
-    Cruising --> Braking : Brak* Applied
+    Launching --> Braking : Brake Applied
+    Cruising --> Braking : Brake Applied
     Coasting --> Braking : Brake Applied
     Braking --> Stationary : Vehicle Stops
-    Braking --> Coasting : Brake Relea*ed While Rolling
+    Braking --> Coasting : Brake Released While Rolling
 ```
 
 ### Architectural Note
