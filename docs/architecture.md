@@ -195,32 +195,6 @@ Any active brake signal should be treated as the highest-priority constraint and
   Motion state
 - Sensor inputs
 
-Conceptually
-
-*``*
-
-```mermaid
-flowchart TD
-
-    StateMachine[Motion State Machine]
-
-    Brake[Brake Override]
-    Speed[Speed Limit]
-    Thermal[Thermal Limit]
-    Battery[Battery Limit]
-    Profile[Ride Profile Limit]
-
-    StateMachine --> Decision
-
-    Brake --> Decision
-    Speed --> Decision
-    Thermal --> Decision
-    Battery --> Decision
-    Profile --> Decision
-
-    Decision[Final Assist Decision]
-```
-
 ---
 
 ## Telemetry Trust Model
