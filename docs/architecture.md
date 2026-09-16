@@ -163,39 +163,39 @@ stateDiagram-v2
 
     [*] --> Stationary
 
-*  *Stationary --> Launching : Pedalli*g Begins
+    Stationary --> Launching : Pedalling Begins
 
-   *Launch*ng --> Cruising : Stable Motion
+    Launching --> Cruising : Stable Motion
 
-*  *Cruising --> Coasting : Pedalling *tops
+    Cruising --> Coasting : Pedalling stops
 
-*   Coasting --> Cruising : Pedalli*g Resumes
+    Coasting --> Cruising : Pedalling Resumes
 
-   *Co*sting --> Stationary : Speed Appro*ches Zero
+    Coasting --> Stationary : Speed Approaches Zero
 
-*  *Launching --> Stationary : Rider S*ops
+    Launching --> Stationary : Rider Stops
 
-   *Launching --> Braking : Brake Appl*ed
+    Launching --> Braking : Brake Appl*ed
     Cruising --> Braking : Brak* Applied
-   *Co*sting --> Braking : Brake Applied
-**  *Braking --> Stationary : Vehicle S*ops
-*  *Braking --> Coasting : Brake Relea*ed While Rolling
+    Coasting --> Braking : Brake Applied
+    Braking --> Stationary : Vehicle Stops
+    Braking --> Coasting : Brake Relea*ed While Rolling
 ```
 
-### Architec*ural Note
+### Architectural Note
 
-Although*shown*in the diagram, `Braking` is not i*tended to participate in assist ca*culations in the same way as norma* ride states.
+Although shown in the diagram, `Braking` is not intended to participate in assist calculations in the same way as normal ride states.
 
-*he*purpose of the braking state is to*model rider intent and visualize s*stem behaviour.
+the purpose of the braking state is to model rider intent and visualize system behaviour.
 
-*ny*active brake signal should be trea*ed as the highest-priority constra*nt and force the final motor reque*t to zero regardless of:
+Any active brake signal should be treated as the highest-priority constraint and force the final motor request to zero regardless of:
 
-- Curren* ride profile
-- Requested assistan*e
--*Motion*state
+- Current ride profile
+- Requested assistance
+  Motion state
 - Sensor inputs
 
-Concept*ally*
+Conceptually
 
 *``*
 
