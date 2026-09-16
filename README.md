@@ -57,7 +57,28 @@ The project focuses on:
 - Controller-independent architecture
 - Community-driven development
 
-# Development Loop
+# Ways of Working
+
+## Engineering Confidence Pyramid
+
+```text
+              🚲 ROAD TESTED
+                  ▲▲▲▲
+
+              🧪 BENCH TESTED
+                  ▲▲▲
+
+              🎮 SIMULATED
+                  ▲▲
+
+              📐 DESIGNED
+                  ▲
+
+              💡 IDEA
+```
+
+Every major feature should climb this pyramid before being considered "trusted".
+
 
 ```mermaid
 flowchart LR
@@ -76,26 +97,9 @@ flowchart LR
     F --> A
 ```
 
-Every ride teaches something.
-
-Every lesson becomes an assumption.
-
-Every assumption gets tested before becoming trusted.
-
-```mermaid
-flowchart LR
-    A[Ride Data 🚲]
-    B[Replay Simulator 🎮]
-    C[Decision Trace 📖]
-    D[Improve Logic ⚙️]
-    E[Validate ✅]
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> B
-```
+> _**Every ride teaches something.**_
+> _**Every lesson becomes an assumption.**_
+> _**Every assumption gets tested before becoming trusted.**_
 
 ---
 
