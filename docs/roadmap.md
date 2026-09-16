@@ -83,19 +83,19 @@ flowchart LR
 # Engineering Confidence Pyramid
 
 ```text
-            🚲 ROAD TESTED
-                  ▲
+              🚲 ROAD TESTED
+                  ▲▲▲▲
 
-             🧪 BENCH TESTED
-                  ▲
+              🧪 BENCH TESTED
+                  ▲▲▲
 
               🎮 SIMULATED
+                  ▲▲
+
+              📐 DESIGNED
                   ▲
 
-               📐 DESIGNED
-                  ▲
-
-                💡 IDEA
+              💡 IDEA
 ```
 
 Every major feature should climb this pyramid before being considered "trusted".
