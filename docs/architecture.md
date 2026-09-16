@@ -143,7 +143,13 @@ flowchart LR
 
 ## Motion State Machine
 
-The state machine models rider movement only.
+Motion state models what the rider and bicycle are doing.
+
+Brake state models what the rider is demanding.
+
+Brake signals therefore participate in
+constraint arbitration rather than
+motion-state identity.
 
 It deliberately does **not** represent:
 
@@ -155,19 +161,25 @@ It deliberately does **not** represent:
 Those belong in the constraint layer.
 
 ```mermaid
-stateDiagram-v2
+flowchart TD
 
-    [*] --> Stationary
+    StateMachine[Motion State Machine]
 
-    Stationary --> Launching : Pedalling Begins
-    Launching --> Cruising : Stable Motion
+    Brake[Brake Override]
+    Speed[Speed Limit]
+    Thermal[Thermal Limit]
+    Battery[Battery Limit]
+    Profile[Ride Profile Limit]
 
-    Cruising --> Coasting : Pedalling Stops
+    StateMachine --> Decision
 
-    Coasting --> Cruising : Pedalling Resumes
-    Coasting --> Stationary : Speed Approaches Zero
+    Brake --> Decision
+    Speed --> Decision
+    Thermal --> Decision
+    Battery --> Decision
+    Profile --> Decision
 
-    Launching --> Stationary : Rider Stops
+    Decision[Final Assist Decision]
 ```
 
 ---
