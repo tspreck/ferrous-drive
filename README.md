@@ -6,7 +6,7 @@
 [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](https://github.com/tspreck/ferrous-drive/issues)
 
 > Rider-oriented **Rust** e-bike control software built around simulation, validation, and controller-independent design.
-Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control.
+Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control. The intention is for a Rider first PAS (Pedal Assisted System) rather than a typical e-bike Motor first approach.
 
 # Project Mantra
 
