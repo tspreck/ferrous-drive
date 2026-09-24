@@ -140,7 +140,7 @@ This keeps the control system portable between different hardware platforms.
 # Current Prototype Direction
 
 ```text
-##Control Computer
+Control Computer
     nRF54L15 DK
 
 Runtime
