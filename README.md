@@ -5,17 +5,18 @@
 [![Status](https://img.shields.io/badge/Status-Early%20Development-yellow)](docs/roadmap.md)
 [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](https://github.com/tspreck/ferrous-drive/issues)
 
-> Rider-oriented **Rust** e-bike control software built around simulation, validation, and controller-independent design.
-Ferrous Drive is an open-source Rust platform for deterministic e-bike propulsion control. The intention is for a Rider first PAS (Pedal Assisted System) rather than a typical e-bike Motor first approach.
+> Rider-oriented **Rust** platform for e-bike assistance, regenerative braking, fitness telemetry, and simulation-first development.
+
+Ferrous Drive explores deterministic, explainable control for a digitally connected direct-drive e-bike system. The current prototype direction combines an nRF54L15, RTIC, heapless data structures, a headless Grin controller, and a Grin V3 Rear All-Axle motor.
 
 # Project Mantra
 
 > _Measure effort > > > Preserve momentum > > > Learn from every ride_
 
 
-Ferrous Drive is not a motor controller.
+Ferrous Drive is not a low-level motor controller.
 
-It is a feedback system that helps riders maintain momentum, protects the machine from unnecessary stress, and continuously learns from the outcomes of its decisions.
+It is a rider-oriented energy and telemetry platform that measures effort, manages assistance and regeneration, protects the system through explicit constraints, and learns from replayable ride data.
 
 ```mermaid
 flowchart LR
@@ -49,13 +50,16 @@ The long-term goal is to create a reusable Rust foundation for e-bike control sy
 # Project Philosophy
 
 The project focuses on:
-
-- Safety-first control design
-- Replayable simulation
+ 
+- Rider-effort-aware assistance
+- Controlled regenerative braking
+- Hub-side rider-power measurement
+- BLE fitness-data broadcasting
+- Deterministic replay simulation
+- Explainable drive decisions
 - Fault-tolerant telemetry handling
-- Explainable assist decisions
 - Controller-independent architecture
-- Community-driven development
+- Event-driven embedded Rust
 
 # Ways of Working
 
@@ -106,19 +110,21 @@ flowchart LR
 # Current Architecture
 
 ```text
-Telemetry
-    ↓
+Torque, PAS, and Vehicle Telemetry
+↓
 Telemetry Trust Model
-    ↓
-Motion State Machine
-    ↓
-Constraint Handling
-    ↓
-Assist Decision
-    ↓
-Motor Request
-    ↓
-Controller Driver
+↓
+Rider-Power Calculation
+↓
+Motion and Energy-Flow Models
+↓
+Constraint Arbitration
+↓
+Assist, Neutral, Regen, or Inhibit Decision
+↓
+Controller-Independent Request
+↓
+Digital Grin Controller Driver
 ```
 
 The core intentionally separates:
@@ -131,7 +137,52 @@ The core intentionally separates:
 This keeps the control system portable between different hardware platforms.
 
 ---
+## Current Prototype Direction
 
+```text
+Control Computer
+    nRF54L15 DK
+
+Runtime
+    RTIC
+
+Memory Strategy
+    heapless and fixed-capacity data
+
+Motor
+    Grin V3 Rear All-Axle 6T
+
+Motor Controller
+    Headless Grin controller
+
+Rider Input
+    Integrated freehub torque and quadrature PAS
+
+Fitness Output
+    BLE rider-power and cadence broadcasting
+
+---
+## Experimental Ideas
+- Hub-side rider-power broadcasting to cycling head units
+- Regen-aware energy management
+- Backpedal or brake-triggered regeneration
+- Controlled negative torque for low-speed,
+- ERG-like outdoor training
+
+These are research directions, not supported features.
+
+---
+## Documentation
+
+- 📜 docs/project_origin.md
+- 📐 docs/architecture.md
+- 📝 docs/decision_log.md
+- 🧠 docs/assumptions.md
+- ✅ docs/validation_matrix.md
+- 🗺️ docs/roadmap.md
+- 📋 [Changelog](CHANGELOG.md)
+
+---
 # Contributing
 
 Contributions are welcome.
@@ -151,16 +202,11 @@ Before proposing major architectural changes, please review:
 - 📐 docs/architecture.md
 - 🧠 docs/assumptions.md
   
-Understanding *why* something exists is often more valuable than immediately changing it.
-
+Understanding *why* something exists is often more valuable than immediately changing it.4
 ---
 
 # License
 
-Licensed under:
-
-- Apache-2.0
-
-at your option.
+Licensed under the Apache License 2.0.
 
 ---
