@@ -110,21 +110,21 @@ flowchart LR
 # Current Architecture
 
 ```text
-Torque, PAS, and Vehicle Telemetry
-↓
-Telemetry Trust Model
-↓
-Rider-Power Calculation
-↓
-Motion and Energy-Flow Models
-↓
-Constraint Arbitration
-↓
-Assist, Neutral, Regen, or Inhibit Decision
-↓
-Controller-Independent Request
-↓
-Digital Grin Controller Driver
+        Torque, PAS, and Vehicle Telemetry
+        ↓
+        Telemetry Trust Model
+        ↓
+        Rider-Power Calculation
+        ↓
+        Motion and Energy-Flow Models
+        ↓
+        Constraint Arbitration
+        ↓
+        Assist, Neutral, Regen, or Inhibit Decision
+        ↓
+        Controller-Independent Request
+        ↓
+        Digital Grin Controller Driver
 ```
 
 The core intentionally separates:
@@ -137,7 +137,7 @@ The core intentionally separates:
 This keeps the control system portable between different hardware platforms.
 
 ---
-## Current Prototype Direction
+# Current Prototype Direction
 
 ```text
 Control Computer
@@ -160,9 +160,9 @@ Rider Input
 
 Fitness Output
     BLE rider-power and cadence broadcasting
-
+```
 ---
-## Experimental Ideas
+# Experimental Ideas
 - Hub-side rider-power broadcasting to cycling head units
 - Regen-aware energy management
 - Backpedal or brake-triggered regeneration
@@ -172,7 +172,7 @@ Fitness Output
 These are research directions, not supported features.
 
 ---
-## Documentation
+# Documentation
 
 - 📜 docs/project_origin.md
 - 📐 docs/architecture.md
