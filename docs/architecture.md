@@ -1,6 +1,6 @@
-> 📚 [README](../README.md) · 🗺️ [Roadmap](roadmap.md) · 📜 [Project Origin](project_origin.md) · 🧠 [Assumptions](assumptions.md) · ✅ [ Architecture
+> 📚 [README](../README.md) · 🗺️ [Roadmap](roadmap.md) · 📜 [Project Origin](project_origin.md) · 🧠 [Assumptions](assumptions.md) · ✅
 
-> Measure effort. Preserve momentum. Learn from every ride.
+> Measure effort... Preserve momentum.. Learn from every ride.
 
 Ferrous Drive is a simulation-first, rider-oriented Rust platform for e-bike propulsion, regenerative braking, telemetry processing, and energy-flow experimentation.
 
