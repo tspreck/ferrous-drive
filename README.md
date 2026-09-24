@@ -5,7 +5,7 @@
 [![Status](https://img.shields.io/badge/Status-Early%20Development-yellow)](docs/roadmap.md)
 [![Issues](https://img.shields.io/github/issues/tspreck/ferrous-drive)](https://github.com/tspreck/ferrous-drive/issues)
 
-> Ferrous Drive is an open-source **Rust** platform that measures rider effort, manages assistance and regenerative braking, and turns every ride into useful training and engineering data. Simulation first. Rider focused. Built to learn.🚲🦀⚡🔋
+> Ferrous Drive is an open-source **Rust** platform that measures rider effort, manages assistance and regenerative braking, and turns every ride into useful training and engineering data. Simulation first. Rider focused. Built to learn.
 
 Ferrous Drive explores deterministic, explainable control for a digitally connected direct-drive e-bike system. The current prototype direction combines an nRF54L15, RTIC, heapless data structures, a headless Grin controller, and a Grin V3 Rear All-Axle motor.
 
