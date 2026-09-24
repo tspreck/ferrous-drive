@@ -842,3 +842,25 @@ The rider provides effort.
 The controller provides support.
 
 The road provides feedback.
+
+## Emergent Direction
+
+A major architectural discovery occurred after moving
+from a geared hub motor to a direct-drive Grin system.
+
+The project may no longer require an external rider
+power meter.
+
+Instead, rider effort may be inferred from controller
+telemetry, torque sensing, and vehicle dynamics.
+
+This opens several future possibilities:
+
+- Virtual power meter functionality
+- Fitness head-unit integration
+- Energy-flow modelling
+- Regenerative braking strategies
+- Outdoor ERG-style training modes
+
+These concepts remain exploratory and are not currently
+part of the supported architecture.
