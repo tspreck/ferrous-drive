@@ -32,40 +32,6 @@
 
 ---
 
-## Table of Contents
-
-- #design-goals
-- #current-specification
-- #design-inspiration
-- #cell-selection
-- #pack-configuration
-- #physical-layout
-- #circular-and-oval-packaging
-- #layer-arrangement
-- #packaging-envelope
-- #structural-concept
-- #electrical-architecture
-- #battery-management-system
-- #protection-strategy
-- #regenerative-braking
-- #temperature-management
-- #controller-integration
-- #power-and-current-targets
-- #energy-and-range-model
-- #mass-budget
-- #telemetry
-- #charging
-- #mechanical-mounting
-- #environmental-requirements
-- #prototype-stages
-- #validation-plan
-- #known-unknowns
-- #non-goals
-- #decision-summary
-- #references
-
----
-
 ## Design Goals
 
 The battery should support Ferrous Drive without turning the bicycle
