@@ -55,6 +55,7 @@ This prevents the project from quietly rewriting its own history as the design e
 | FD-022 | Treat ANT+ as a future investigation | ON HOLD |
 | FD-023 | Investigate controlled negative torque for outdoor training resistance | EXPLORATORY |
 | FD-024 | Preserve independent brake, controller, and battery protections | ACCEPTED |
+| FD-025 | Use Molicel P50B Cells for the Prototype Battery | ACCEPTED |
 
 ---
 
@@ -996,7 +997,56 @@ Software running on the prototype computer is not an acceptable single point of 
 - Hardware protections must remain active during development and testing.
 
 ---
+## FD-025: Use Molicel P50B Cells for the Prototype Battery
 
+**Status:** `ACCEPTED`
+
+### Decision
+
+The first Ferrous Drive battery prototype will use Molicel
+INR-21700-P50B cells instead of LG M50LT cells.
+
+### Configuration
+
+- Topology: 10S2P
+- Cell count: 20
+- Physical layout: 7 + 6 + 7
+- Nominal voltage: 36 V
+- Full-charge voltage: 42 V
+- Nominal capacity: 10 Ah
+- Nominal energy: 360 Wh
+
+### Why
+
+The P50B provides a better system-level fit for:
+
+- Cold-weather commuting
+- Reduced voltage sag
+- Stronger transient assistance
+- Regenerative braking
+- Lower internal heating
+- Low-state-of-charge performance
+- Future controlled-resistance experiments
+
+The small mild-weather range improvement is secondary. The main
+benefit is more stable and predictable behaviour across temperature,
+load, and state of charge.
+
+### Trade-Off
+
+The P50B increases bare-cell mass by approximately 60–80 g
+compared with the previous LG M50LT concept.
+
+The battery mass targets are therefore revised to:
+
+- Optimization goal: 1.70 kg
+- Working design target: 1.75 kg or less
+- Prototype ceiling: 1.85 kg
+
+---
+### Supersedes
+
+The provisional selection of LG M50LT cells for the first prototype.
 ## Current Architecture Direction
 
 The accepted and provisional decisions currently produce this stack:
