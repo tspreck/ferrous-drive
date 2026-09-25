@@ -36,43 +36,6 @@
 
 ---
 
-## Table of Contents
-
-- #executive-summary
-- #feature-intent
-- #design-goals
-- #non-goals
-- #core-safety-principles
-- #rider-experience
-- #system-context
-- #system-authority
-- #drive-system-requirements
-- #brake-intent-sensing
-- #feedback-sensors
-- #signal-quality
-- #braking-state-machine
-- #first-generation-regen-profile
-- #deceleration-feedback
-- #constraint-manager
-- #battery-and-bms-constraints
-- #motor-and-controller-constraints
-- #mechanical-brake-blending
-- #low-speed-handoff
-- [relationship-to-ride-modes
-- #neutral-ride
-- #energy-accounting
-- [Route-Informed Recovery Model](#route-ng-and-telemetry
-- [shadow-learning
-- #failure-behaviour
-- #first-generation-scope
-- #deferred-capabilities
-- [validation-strategy
-- [acceptance-criteria
-- #open-questions
-- #references
-
----
-
 ## Executive Summary
 
 Ferrous Drive will use **rider-triggered, regen-first braking with
