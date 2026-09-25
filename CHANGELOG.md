@@ -1,74 +1,101 @@
-# Changelog
-
-All notable changes to Ferrous Drive are recorded here.
-
-The project is currently in early development. Until the first tagged release, changes are listed under **Unreleased**.
-
-For the reasoning behind major architectural changes, see docs/decision_log.md.
-
 ## [Unreleased]
-
-### Added
-
-- Created the public Ferrous Drive repository.
-- Added the initial project vision, architecture, roadmap, and project-origin documentation.
-- Added an assumptions register and validation-matrix work stream.
-- Added a telemetry trust model covering valid, aging, stale, and invalid measurements.
-- Added simulation-first development and deterministic ride replay as core project principles.
-- Added explainable drive decisions and controller-independent motor requests to the architecture.
-- Added regenerative braking and bidirectional energy flow to the system model.
-- Added hub-side rider-power calculation using freehub torque and rotation.
-- Added planned BLE cycling-power broadcasting to compatible head units.
-- Added outdoor ERG-like regenerative resistance as an exploratory research idea.
-- Added GitHub issue and contribution workflows to preserve project context and decision history.
 
 ### Changed
 
-- Renamed the project from `ebike-os-core` to **Ferrous Drive**.
-- Replaced the ESP32-S3 prototype direction with the **Nordic nRF54L15 DK**.
-- Replaced the planned conventional RTOS architecture with an investigation of **RTIC**.
-- Adopted **heapless** and fixed-capacity data structures as the preferred embedded-memory direction.
-- Replaced the **Bafang G310 geared hub motor** with the **Grin V3 Rear All-Axle 6T direct-drive motor**.
-- Replaced the mandatory Cycle Analyst V3 analog-control path with a controller-independent digital-driver architecture.
-- Changed the system model from assist-only propulsion to assist, neutral, regeneration, and inhibited energy-flow modes.
-- Changed the primary rider-input direction from an external power meter to the Grin motor’s integrated freehub torque and PAS sensors.
-- Changed rider-power terminology to distinguish measured hub-side power from estimated crank-equivalent power.
-- Changed slew-rate definitions from watts per control tick to watts per second.
-- Separated motion-state modelling from thermal, battery, speed, braking, communication, and regeneration constraints.
-- Changed control output from a single watt value to an explainable drive-decision model.
-- Changed braking from a simple motor cut-off concept to a high-priority override that may permit bounded regenerative torque when conditions allow.
+#### Prototype hardware platform
 
-### Removed
+- Replaced the planned ESP32-S3 prototype platform with the Nordic nRF54L15 DK.
+- Selected the nRF54L15 DK as the initial platform for wireless fitness-sensor integration, control-system prototyping, and controller communication experiments.
+- Kept the Ferrous Drive control core platform-independent so the project does not become permanently tied to one microcontroller family.
 
-- Removed the Cycle Analyst V3 as a mandatory system component.
-- Removed the proposed PWM, RC-filter, and 3.3 V to 5 V analog-command architecture.
-- Removed the ESP32-S3 as the current prototype target.
-- Removed the Bafang G310 as the target motor.
-- Removed the conventional RTOS as the preferred runtime direction.
-- Removed the requirement for a separate external rider power meter from the target architecture.
-- Removed the assumption that telemetry is either present or absent without freshness or quality information.
+#### Embedded runtime direction
 
-### Under Investigation
+- Replaced the planned general-purpose RTOS approach with a native embedded Rust runtime based on RTIC.
+- Selected `heapless` collections and fixed-capacity data structures as the preferred starting point for embedded data handling.
+- Prioritized deterministic execution, bounded memory use, explicit task priorities, and minimal runtime dependencies.
+- Kept the desktop replay simulator as the primary development environment, with the embedded runtime treated as an adapter around the shared control core.
 
-- Exact headless Grin motor-controller model and firmware.
-- Digital command and telemetry protocol for the Grin controller.
-- Controller acknowledgements, watchdogs, and communication timeouts.
-- RTIC and HAL support for the nRF54L15.
-- BLE-stack integration with the RTIC runtime.
-- Torque-sensor calibration, drift, filtering, and dynamic response.
-- Accuracy of hub-side rider power compared with a reference crank or pedal power meter.
-- BLE Cycling Power Service compatibility with cycling head units.
-- ANT+ stack availability, licensing, and nRF54L15 integration.
-- Battery charge acceptance and regeneration limits.
-- Safe regenerative-braking behaviour.
-- Outdoor ERG-like resistance, including control stability and rider override.
-- Simulation and bench-validation methods for assist-to-regeneration transitions.
+#### Motor and smart-wheel baseline
 
-### Safety Notes
+- Replaced the Bafang G310 geared hub motor concept with the Grin V3 Rear All-Axle direct-drive hub motor.
+- Selected the standard 6T winding as the current design baseline.
+- Selected the THG torque-sensing Shimano HG freehub as the current rider-input sensing baseline.
+- Updated the reference bicycle to the Fairlight Strael 4.0.
+- Defined the current reference wheel as a removable 700C rear smart wheel with a nominal 35-622 tyre.
+- Reframed the smart wheel as a reference hardware implementation for Ferrous Drive rather than the definition of the portable platform.
 
-- Ferrous Drive remains experimental and is not ready to control a ridden bicycle.
-- Mechanical brakes remain independent and primary.
-- Regenerative braking must not be treated as the only means of slowing the bicycle.
-- Battery-management, motor-controller, overcurrent, and thermal protections must remain active.
-- Direct digital controller operation must not be considered supported until communication and safe-state behaviour have been verified.
-- Outdoor ERG-like resistance requires simulation, bench testing, wheel-off-ground testing, and controlled-environment validation before ridden experimentation.
+#### Controller architecture
+
+- Removed the Cycle Analyst V3 from the required control path.
+- Replaced the proposed PWM, RC-filter, level-shifter, and analog `AuxIn` architecture with a digital controller-driver architecture.
+- Adopted a headless Grin motor controller as the current controller direction.
+- Kept controller-specific protocol handling outside the Ferrous Drive control core.
+- Retained controller-independent `MotorRequest` and telemetry abstractions as architectural goals.
+
+#### Assistance and energy-flow model
+
+- Expanded the architecture from one-way propulsion assistance to bidirectional energy and torque control.
+- Added regenerative braking as a core design consideration enabled by the direct-drive hub motor.
+- Added virtual freewheeling or drag-compensation behaviour as a requirement for preserving normal road-bike feel.
+- Added integrated freehub torque and pedal-rotation sensing as potential primary rider-input sources.
+- Expanded rider modes to include the intended sensations of Neutral, Support, Commute, and Recovery.
+- Defined Neutral mode as assistance intended to offset direct-drive magnetic drag and added system mass rather than provide obvious propulsion.
+- Updated the project direction from a simple assist controller toward a rider-oriented propulsion and energy-management platform.
+
+#### Battery-pack direction
+
+- Retained `10S2P`, 36 V nominal and 42 V maximum, as the current practical battery baseline.
+- Added a lightweight fourteen-cell battery study based on a physical arrangement of two layers of seven cells.
+- Identified `14S1P` as the primary fourteen-cell topology worth investigating for higher-voltage, low-cell-count packaging.
+- Identified `7S2P` as physically possible but likely poorly matched to the current 6T, 700C, and approximately 20–35 km/h assistance target.
+- Added regenerative charge acceptance, cold charging, per-cell current, voltage sag, BMS behaviour, and full-pack voltage as required battery-selection criteria.
+- Clarified that physical cell layout and electrical series-parallel topology are separate design decisions.
+
+### Added
+
+#### Smart-wheel design baseline
+
+Added a hardware reference design with the following initial targets:
+
+```text
+Reference bicycle:
+Fairlight Strael 4.0
+
+Primary use:
+Year-round 35 km commute
+
+Typical unassisted speed:
+Approximately 27–33 km/h
+
+Target assistance window:
+Approximately 20–35 km/h
+
+Prototype control computer:
+Nordic nRF54L15 DK
+
+Embedded runtime:
+RTIC
+
+Embedded memory strategy:
+heapless
+
+Motor:
+Grin V3 Rear All-Axle
+
+Winding:
+Standard 6T
+
+Freehub:
+THG torque-sensing Shimano HG
+
+Controller:
+Headless Grin motor controller with digital communication
+
+Reference battery:
+10S2P
+36 V nominal
+42 V maximum
+
+Reference wheel:
+700C
+Nominal 35-622 tyre
