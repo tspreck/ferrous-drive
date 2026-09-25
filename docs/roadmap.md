@@ -559,7 +559,6 @@ Potential future work, subject to evidence:
 - Alternative battery sizes
 - Open route and telemetry datasets with privacy protection
 - Contributor hardware-in-the-loop fixtures
-- Formal safety and regulatory assessment
 
 ---
 
