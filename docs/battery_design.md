@@ -1,10 +1,10 @@
-> 📚 [README](../README.md) · 🗺️ [Roadmap](roadmap.md) · 📐 ure](architecture.md) · 📝 decision_log.md · 🧠 assumptions.md · ✅ validation_matrix.md · 📋 ../CHANGELOG.md
+> 📚 [README](../README.md) · 📐 [Architecture](architecture.md) · 🛑 [Regenerative Braking](regenerative_braking.md) · 🧠 [Assumptions](assumptions.md) · ✅ [Validation Matrix](validation_matrix.md) · 📝 [Decision Log](decision_log.md)
 
 # Battery Design
 
 > Carry only the energy needed.  
 > Keep the bike feeling like a bike.  
-> Use every watt deliberately.
+> Accept regeneration safely and predictably.
 
 ## Status
 
@@ -16,6 +16,7 @@
 | Physical arrangement | Selected for CAD investigation |
 | Enclosure design | Not started |
 | BMS selection | Open |
+| Regen-capable current path | Required |
 | Controller integration | Under investigation |
 | Physical validation | Not started |
 | Road-ready | No |
@@ -24,53 +25,64 @@
 > This document describes a system-level battery concept.
 >
 > It is not a cell-assembly, welding, wiring, or construction guide.
-> Lithium-ion battery assembly involves significant electrical, thermal,
+> Lithium-ion battery assembly involves serious electrical, thermal,
 > mechanical, fire, and transport risks.
 >
-> The final electrical design and physical assembly should be reviewed
-> or completed by an experienced battery-pack builder.
+> The final electrical design and physical assembly should be reviewed or
+> completed by an experienced battery-pack builder.
 
 ---
 
-## Design Goals
+## Executive Summary
 
-The battery should support Ferrous Drive without turning the bicycle
-into a heavy, permanently electrified platform.
-
-Primary goals:
-
-- Single removable bottle-style battery
-- Enough energy for a 35 km commute leg
-- Low voltage sag
-- Useful winter performance
-- Regenerative-current acceptance
-- Secure mounting
-- Weather-resistant packaging
-- Safe electrical isolation
-- Easy removal for charging
-- Compatibility with Grin controllers
-- Measurable operating limits
-- Replaceable prototype enclosure and electronics
-
-The design priorities are:
+The provisional Ferrous Drive battery is a removable 36 V bottle-style module
+built around twenty Molicel INR-21700-P50B cells in a 10S2P topology.
 
 ```text
-Safety
-    ↓
-Predictability
-    ↓
-Electrical Performance
-    ↓
-Mechanical Reliability
-    ↓
-Low Mass
-    ↓
-Visual Integration
+Nominal voltage
+    36 V
+
+Full-charge voltage
+    42 V
+
+Nominal capacity
+    10 Ah
+
+Nominal energy
+    360 Wh
+
+Cell arrangement
+    7 + 6 + 7
 ```
 
-Mass reduction must not take priority over insulation, protection,
-cell retention, temperature sensing, connector security, or structural
-integrity.
+The pack is shared by two possible drive configurations:
+
+- A lightweight freewheeling geared hub with forward assistance only
+- A Grin direct-drive system with positive torque, regenerative braking,
+  integrated sensing, and richer telemetry
+
+The battery must therefore remain bidirectional even if the first installed
+motor cannot regenerate.
+
+Regeneration is not a secondary convenience. It affects BMS selection, current
+path, pack-voltage control, charge-temperature limits, telemetry, state-of-
+charge headroom, connector selection, and controller integration.
+
+The target finished mass remains:
+
+```text
+Optimization goal
+    1.70 kg
+
+Working target
+    1.75 kg or less
+
+Initial prototype ceiling
+    1.85 kg
+```
+
+A finished 360 Wh pack below 1.5 kg is not treated as a credible requirement
+with the selected twenty-cell P50B architecture.
 
 ---
 
@@ -79,7 +91,6 @@ integrity.
 | Attribute | Current target |
 |---|---|
 | Cell | Molicel INR-21700-P50B |
-| Chemistry | Lithium-ion |
 | Cell format | 21700 cylindrical |
 | Topology | 10S2P |
 | Cell count | 20 |
@@ -89,48 +100,57 @@ integrity.
 | Nominal capacity | 10 Ah |
 | Nominal energy | 360 Wh |
 | Maximum bare-cell mass | 1.42 kg |
-| Form | Single removable bottle-style module |
-| Optimization mass goal | 1.70 kg |
-| Working design target | 1.75 kg or less |
-| Initial prototype ceiling | 1.85 kg |
-| Initial controller | Phaserunner V6 L10 |
-| Potential integrated controller | Baserunner V6 L10 |
-| Regenerative braking | Required |
-| External fitness output | Managed by Ferrous Drive |
+| Form | Removable bottle-style module |
+| Working mass target | 1.75 kg or less |
+| Prototype ceiling | 1.85 kg |
+| Bidirectional current path | Required |
+| Regenerative braking | Required for compatible drives |
+| Initial controller candidate | Phaserunner V6 L10 |
+| Integrated controller candidate | Baserunner V6 L10 |
 
-These values describe the current design direction, not completed or
-validated hardware.
+These values describe the current design direction, not completed hardware.
 
 ---
 
-## Design Inspiration
+## Design Goals
 
-The industrial-design benchmark is the MAHLE eX1 external battery.
+The battery should support Ferrous Drive without turning the bicycle into a
+permanently electrified platform.
 
-Relevant characteristics include:
+Primary goals:
 
-- Bottle-style removable form
-- Clean bicycle integration
-- Compact mounting
-- Weather-resistant enclosure
-- Easy off-bike handling
-- Low visual impact
+- Complete a 35 km commute leg with reserve.
+- Remain removable and practical to carry.
+- Support mild-weather and winter operation.
+- Provide low voltage sag.
+- Accept bounded regenerative charge current.
+- Expose charge and discharge permission.
+- Measure voltage, current, and temperature.
+- Protect cells independently of Ferrous Drive software.
+- Isolate all conductors from a conductive carbon enclosure.
+- Withstand vibration, weather, and repeated removal.
+- Remain compatible with both candidate drive configurations.
 
-The Ferrous Drive design is not intended to copy the MAHLE electrical
-or mechanical architecture.
+Priority order:
 
-| Attribute | MAHLE eX1 benchmark | Ferrous Drive target |
-|---|---:|---:|
-| Nominal voltage | 36 V | 36 V |
-| Energy | 171 Wh | 360 Wh |
-| Diameter | 75 mm | Approximately 74–77 mm wide |
-| Length | 195 mm | Approximately 250–290 mm |
-| Finished mass | 1.1 kg | Approximately 1.70–1.85 kg |
-| Purpose | Range extender | Primary removable battery |
-| Regen integration | System dependent | Explicit requirement |
+```text
+Safety
+    ↓
+Predictability
+    ↓
+Electrical performance
+    ↓
+Mechanical reliability
+    ↓
+Serviceability
+    ↓
+Low mass
+    ↓
+Visual integration
+```
 
-The MAHLE product is a usability and packaging reference, not a direct
-mass or dimensional target.
+Mass reduction must not take priority over insulation, fault protection,
+retention, temperature sensing, connector security, or structural integrity.
 
 ---
 
@@ -142,8 +162,6 @@ mass or dimensional target.
 Molicel INR-21700-P50B
 ```
 
-Published cell characteristics:
-
 | Attribute | Published value |
 |---|---:|
 | Nominal voltage | 3.6 V |
@@ -151,6 +169,9 @@ Published cell characteristics:
 | Discharge cutoff | 2.5 V |
 | Typical capacity | 5.0 Ah |
 | Typical energy | 18 Wh |
+| Standard charge current | 5 A |
+| Maximum charge current | 25 A |
+| Continuous discharge current | 60 A |
 | Typical DC impedance | 12.8 mΩ |
 | Maximum diameter | 21.55 mm |
 | Maximum height | 70.15 mm |
@@ -158,36 +179,23 @@ Published cell characteristics:
 
 ### Selection rationale
 
-The P50B was selected over the earlier LG M50LT candidate because it
-offers a stronger system-level fit for:
+The P50B provides useful headroom for:
 
-- Lower voltage sag
+- Low voltage sag
 - Reduced internal heating
-- Better cold-weather power delivery
-- Stable low-state-of-charge behaviour
+- Cold-weather power delivery
 - Short assistance transients
 - Regenerative-current acceptance
+- Conservative operation below cell limits
 - Future controlled-resistance experiments
-- More predictable operation across temperature and load
 
-The cell provides considerably more current capability than Ferrous
-Drive intends to use.
-
-The electrical headroom exists to support conservative operation, not
-maximum motor output.
-
-### Trade-off
-
-The P50B increases cell mass compared with the earlier M50LT concept.
-
-This makes the previous 1.50 kg finished-pack objective impractical
-without unacceptable compromises.
+Published cell limits do not become pack limits automatically. The BMS,
+interconnects, fuse, connector, wiring, temperatures, and validated operating
+model determine the actual system limits.
 
 ---
 
 ## Pack Configuration
-
-The prototype uses:
 
 ```text
 10 series groups
@@ -197,51 +205,42 @@ The prototype uses:
 20 cells
 ```
 
-Electrical result:
-
 ```text
-Series count       10S
-Parallel count      2P
-Nominal voltage     36 V
-Full voltage        42 V
-Nominal capacity    10 Ah
-Nominal energy      360 Wh
+Nominal voltage
+    36 V
+
+Full voltage
+    42 V
+
+Nominal capacity
+    10 Ah
+
+Nominal energy
+    360 Wh
 ```
 
 ```mermaid
 flowchart LR
-    G1["2P Group 1"]
-    G2["2P Group 2"]
-    G3["2P Group 3"]
-    G4["2P Group 4"]
-    G5["2P Group 5"]
-    G6["2P Group 6"]
-    G7["2P Group 7"]
-    G8["2P Group 8"]
-    G9["2P Group 9"]
-    G10["2P Group 10"]
-
-    G1 --> G2
-    G2 --> G3
-    G3 --> G4
-    G4 --> G5
-    G5 --> G6
-    G6 --> G7
-    G7 --> G8
-    G8 --> G9
-    G9 --> G10
+    G1[2P Group 1] --> G2[2P Group 2]
+    G2 --> G3[2P Group 3]
+    G3 --> G4[2P Group 4]
+    G4 --> G5[2P Group 5]
+    G5 --> G6[2P Group 6]
+    G6 --> G7[2P Group 7]
+    G7 --> G8[2P Group 8]
+    G8 --> G9[2P Group 9]
+    G9 --> G10[2P Group 10]
 ```
 
-The physical layering does not define the electrical grouping by
-itself. Electrical group placement must be designed alongside the
-interconnect geometry, insulation barriers, BMS connections, and
-fault-current paths.
+Physical layering does not determine electrical group placement by itself.
+Interconnect geometry, insulation, fault-current paths, temperature sensing,
+and BMS routing must be designed together.
 
 ---
 
 ## Physical Layout
 
-The prototype uses three axial cell layers:
+The provisional cell arrangement uses three axial layers:
 
 ```text
 Layer 1
@@ -249,7 +248,7 @@ Layer 1
 
 Layer 2
     6 cells
-    1 electronics and routing cavity
+    + electronics and routing cavity
 
 Layer 3
     7 cells
@@ -258,10 +257,7 @@ Total
     20 cells
 ```
 
-Each seven-cell layer consists of one central cell surrounded by six
-outer cells placed at 60-degree intervals.
-
-### Seven-cell cross-section
+Each seven-cell layer uses one central cell surrounded by six outer cells.
 
 ```text
              ○
@@ -273,240 +269,23 @@ outer cells placed at 60-degree intervals.
         ○         ○
 ```
 
-This arrangement forms a rounded hexagonal cluster.
-
-Its natural boundary fits efficiently inside:
-
-- A circular bottle enclosure
-- A mildly oval bottle enclosure
-- A rounded enclosure with curved sides
-
-The exact layout must be defined in a dimensioned CAD model.
-
----
-
-## Circular and Oval Packaging
-
-### Cell-cluster dimensions
-
-Using the maximum P50B diameter of 21.55 mm:
-
-```text
-Maximum cluster width
-    3 × 21.55 mm
-    = 64.65 mm
-
-Maximum cluster height
-    Approximately 2.732 × 21.55 mm
-    = approximately 58.9 mm
-```
-
-With an indicative 0.5 mm gap between adjacent cells:
-
-```text
-Approximate cluster width
-    65.7 mm
-
-Approximate cluster height
-    59.7 mm
-```
-
-These dimensions cover cells only.
-
-They do not include:
-
-- Cell-wrap tolerance
-- Printed retention ribs
-- Dielectric barriers
-- Abrasion protection
-- Carbon-shell isolation
-- Structural shell
-- External finish
-
-### Circular enclosure option
-
-```text
-Indicative internal diameter
-    Approximately 68–71 mm
-
-Indicative external diameter
-    Approximately 73–77 mm
-```
-
-Advantages:
-
-- Familiar bottle appearance
-- Simple composite layup
-- Good torsional stiffness
-- Simple rotational geometry
-
-Disadvantages:
-
-- Unused space around the rounded hexagonal cluster
-- Less convenient space for flat electronics
-- Greater tendency to rotate in the mount
-- Mounting loads require a dedicated internal spine
-
-### Oval enclosure option
-
-```text
-Indicative internal dimensions
-    Approximately 68–71 mm wide
-    Approximately 62–66 mm deep
-
-Indicative external dimensions
-    Approximately 73–77 mm wide
-    Approximately 67–72 mm deep
-```
-
-Advantages:
-
-- Better match to the natural cluster shape
-- Less unused internal volume
-- Flatter bicycle-facing surface
-- Better mounting stability
-- Easier mounting-spine integration
-- Better resistance to pack rotation
-- Fixed connector orientation
-
-Disadvantages:
-
-- More complex carbon layup
-- More complex end caps
-- Orientation becomes fixed
-- Greater CAD and tooling complexity
-
-### Recommended cross-section
-
-The preferred first CAD direction is a mild oval:
-
-```text
-Target external width
-    76 mm
-
-Target external depth
-    70 mm
-```
-
-This remains recognizably bottle-sized while providing:
-
-- A gently flattened mounting face
-- Space for a structural spine
-- Better resistance to rotation
-- Reduced dead volume
-- Consistent connector orientation
-- Improved use of the middle-layer cavity
-
----
-
-## Layer Arrangement
-
-```mermaid
-flowchart LR
-    L1["Layer 1: 7 cells"]
-    L2["Layer 2: 6 cells and electronics cavity"]
-    L3["Layer 3: 7 cells"]
-
-    L1 --> L2
-    L2 --> L3
-```
-
-Conceptual side view:
-
-```text
-┌──────────────────────────────────────────────┐
-│                                              │
-│   Layer 1        Layer 2        Layer 3      │
-│                                              │
-│    7 cells        6 cells        7 cells     │
-│                     +                        │
-│                electronics                   │
-│                   cavity                     │
-│                                              │
-└──────────────────────────────────────────────┘
-```
-
-### Middle-layer cavity
-
-The middle layer retains the same external envelope as the seven-cell
-layers while leaving one cell position empty.
-
-```text
-Seven-cell layer             Six-cell middle layer
-
-        ○                            ○
-
-    ○       ○                    ○       ○
-
- ○      ○      ○              ○     [ ]     ○
-
-    ○       ○                    ○       ○
-```
-
-The `[ ]` position represents the electronics and routing cavity.
-
-The cavity should be evaluated for:
-
-1. BMS
-2. Pack fuse
-3. Balance-lead routing
-4. Temperature-sensor wiring
-5. Main conductors
-6. Connector strain relief
-7. Service separation
-8. Controlled pressure-relief path
-
-The cavity position may move away from the geometric centre if another
-location provides better:
-
-- Electrical clearances
-- Thermal separation
-- Connector routing
-- Structural load paths
-- BMS access
-- Mass distribution
+The exact geometry requires a tolerance-aware CAD model.
 
 ---
 
 ## Packaging Envelope
 
-### Cell-stack length
-
-Using the maximum cell height:
+Using the P50B maximum diameter of 21.55 mm:
 
 ```text
-3 × 70.15 mm
-= 210.45 mm
+Cell-only cluster width
+    64.65 mm
+
+Cell-only cluster height
+    Approximately 58.9 mm
 ```
 
-Additional axial space is required for:
-
-- Inter-layer barriers
-- Series connections
-- End insulation
-- Impact protection
-- Connector support
-- End caps
-- Sealing surfaces
-- Mounting features
-
-### Proposed finished envelope
-
-```text
-External width
-    Approximately 74–77 mm
-
-External depth
-    Approximately 68–72 mm
-
-Finished length
-    Approximately 250–290 mm
-
-Finished mass
-    Approximately 1.70–1.85 kg
-```
-
-Preferred initial CAD envelope:
+Indicative preferred external envelope:
 
 ```text
 Width
@@ -519,137 +298,99 @@ Length
     270 mm
 ```
 
-This is a packaging baseline, not a frozen specification.
-
-### Cross-section design rule
-
-The enclosure must provide continuous allowance for:
+Provisional range:
 
 ```text
-Cell
-    ↓
-Cell wrap
-    ↓
-Controlled spacing
-    ↓
-Printed dielectric retention
-    ↓
-Abrasion-resistant barrier
-    ↓
-Carbon-shell insulation
-    ↓
-Structural carbon shell
-    ↓
-External finish
+External width
+    Approximately 74–77 mm
+
+External depth
+    Approximately 68–72 mm
+
+Finished length
+    Approximately 250–290 mm
 ```
 
-The carbon shell must not contact the cells directly.
+The mild oval is preferred over a perfect cylinder because it provides:
 
-The original cell wraps must not be treated as the only insulation
-between the cells and the conductive carbon structure.
+- Better fit to the rounded-hexagonal cell cluster
+- A flatter frame-facing surface
+- Better resistance to rotation
+- A clearer structural-spine location
+- More usable electronics and routing volume
 
-### Mounting orientation
+---
 
-The oval profile should be oriented with:
+## Lightweight Printed Cell Carrier
 
-```text
-Wider dimension
-    Across the bicycle
+The internal printed component is a lightweight polymer cell carrier, not the
+sole electrical-insulation system and not a solid plastic bottle.
 
-Flatter dimension
-    Toward the bicycle frame
+It should provide:
 
-Mounting spine
-    Along the frame-facing surface
-```
+- Cell positioning
+- Cell-to-cell separation
+- Inter-layer alignment
+- Protected wire routing
+- BMS and fuse support
+- Temperature-sensor locations
+- Connector alignment
+- Load transfer toward the mounting spine
 
-The final orientation must be checked against:
+It must not:
 
-- Frame clearance
-- Crank clearance
-- Front-wheel clearance
-- Bottle-boss position
-- Cable routing
-- Battery removal path
-- Rider leg clearance
+- Replace terminal insulation
+- Replace inter-layer barriers
+- Be the sole barrier to the carbon shell
+- Clamp cells excessively
+- Carry mounting loads through cell cans
+- Trap unnecessary heat
+- Use conductive or carbon-filled filament
+
+Dedicated terminal insulation, abrasion barriers, and continuous isolation
+from the carbon shell remain required.
 
 ---
 
 ## Structural Concept
 
-The enclosure should use a composite structural approach:
-
 ```text
-Printed dielectric skeleton
-        +
-Electrical and abrasion barriers
-        +
-Carbon-fibre structural shell
-        +
+Cells
+    ↓
+Lightweight printed cell carrier
+    ↓
+Terminal and inter-layer insulation
+    ↓
+Continuous abrasion-resistant dielectric barrier
+    ↓
+Carbon structural shell
+    ↓
 Reinforced mounting spine
 ```
 
 ```mermaid
 flowchart TB
-    Cells["P50B Cell Assembly"]
-    Skeleton["Printed Dielectric Skeleton"]
-    Barriers["Electrical and Abrasion Barriers"]
-    Electronics["BMS, Fuse and Sensing"]
-    Shell["Carbon Structural Shell"]
-    Mount["Reinforced Mounting Spine"]
+    Cells[P50B Cell Assembly]
+    Carrier[Printed Cell Carrier]
+    Insulation[Dielectric and Abrasion Barriers]
+    Electronics[BMS, Fuse, and Sensing]
+    Shell[Carbon Structural Shell]
+    Spine[Reinforced Mounting Spine]
 
-    Cells --> Skeleton
-    Electronics --> Skeleton
-    Skeleton --> Barriers
-    Barriers --> Shell
-    Shell --> Mount
+    Cells --> Carrier
+    Electronics --> Carrier
+    Carrier --> Insulation
+    Insulation --> Shell
+    Shell --> Spine
 ```
-
-### Printed skeleton responsibilities
-
-- Cell location
-- Controlled spacing
-- Dielectric separation
-- Axial support
-- Inter-layer positioning
-- BMS support
-- Protected conductor channels
-- Temperature-sensor locations
-- Connector alignment
-- Load transfer into the mounting spine
-
-The skeleton should not duplicate the structural role of the carbon
-shell with unnecessarily thick printed walls.
-
-### Carbon-shell responsibilities
-
-- Bending stiffness
-- Torsional stiffness
-- Impact-load distribution
-- Mounting-load distribution
-- Environmental barrier support
-- Durable external surface
 
 > [!CAUTION]
 > Carbon fibre is electrically conductive.
 >
-> A continuous abrasion-resistant dielectric barrier is required between
-> the carbon structure and every cell, conductor, interconnect, BMS
-> terminal, fuse terminal, and connector contact.
+> It must not contact cells, interconnects, fuse terminals, BMS terminals, or
+> connector contacts.
 
-### Cell structural isolation
-
-The cell cans must not be used as structural members.
-
-The design must avoid:
-
-- Concentrated radial loads
-- Excessive axial compression
-- Cell-can abrasion
-- Relative cell movement
-- Mounting loads through the cells
-- Point loading from fasteners
-- Carbon contact with damaged cell wraps
+The cell cans must not act as structural members.
 
 ---
 
@@ -657,42 +398,43 @@ The design must avoid:
 
 ```mermaid
 flowchart LR
-    Cells["10S2P Cell Assembly"]
-    BMS["Bidirectional 10S BMS"]
-    Fuse["Pack Fuse"]
-    Connector["Main Connector"]
-    Controller["Motor Controller"]
+    Cells[10S2P Cell Assembly]
+    BMS[Bidirectional 10S BMS]
+    Fuse[Pack Fuse]
+    Current[Current Measurement]
+    Connector[Main Connector]
+    Controller[Motor Controller]
 
     Cells --> BMS
     BMS --> Fuse
-    Fuse --> Connector
+    Fuse --> Current
+    Current --> Connector
     Connector --> Controller
 ```
 
-The final current path must support:
+The current path must support:
 
 ```text
-Battery discharge
+Propulsion
     Cells → controller
 
-Regenerative charging
+Regeneration
     Controller → cells
 ```
 
-The electrical design must define:
+The final design must define:
 
 - Common-port or separate-port BMS
 - Regen current path
-- Fuse position
-- Service disconnect
+- Main fuse location
+- Service isolation
 - Charging connection
-- Controller connection
-- Connection-inrush behaviour
-- Balance connection protection
-- Temperature measurement
-- Pack-voltage measurement
-- Current measurement
-- Removal-under-load behaviour
+- Motor-controller connection
+- Connection inrush
+- Balance-lead protection
+- Current measurement direction and range
+- Pack removal under load
+- Safe response to BMS charge inhibition
 
 ---
 
@@ -703,11 +445,10 @@ The electrical design must define:
 - 10-series lithium-ion monitoring
 - Cell-group overvoltage protection
 - Cell-group undervoltage protection
-- Discharge overcurrent protection
-- Charge overcurrent protection
+- Charge and discharge overcurrent protection
 - Short-circuit protection
 - Cell balancing
-- Temperature monitoring
+- At least two temperature inputs
 - Bidirectional current support
 - Regenerative-current handling
 - Defined fault recovery
@@ -716,29 +457,187 @@ The electrical design must define:
 
 ### Desired capabilities
 
-- Pack-voltage telemetry
+- Pack voltage telemetry
+- Bidirectional current telemetry
 - Individual group-voltage telemetry
-- Temperature telemetry
+- Battery-temperature telemetry
 - Charge and discharge permission
 - Fault reporting
 - State-of-charge estimation
 - Configurable thresholds
 - Digital interface for Ferrous Drive
 
-### Open questions
+### Open BMS questions
 
 - Exact BMS model
-- Common-port versus separate-port topology
-- Behaviour during regen
+- Common-port or separate-port topology
+- Advance charge-permission signal
 - Behaviour near full charge
-- Behaviour following overvoltage
-- Behaviour following undervoltage
-- Handling of a BMS disconnect during regeneration
-- Advance communication of charge or discharge inhibition
-- Availability of individual group voltages
+- Behaviour during controller regen
+- Behaviour if protection opens during regen
+- Individual group-voltage access
+- Cold-charge configuration
+- Current-measurement precision
 
-The motor controller should enforce operating limits before the BMS
-needs to open the current path.
+The controller and Ferrous Drive should enforce normal operating limits before
+the BMS needs to open the current path.
+
+---
+
+## Regenerative Braking Interface
+
+The battery exposes a bounded regen capability to the control architecture.
+
+```rust
+pub struct BatteryRegenCapability {
+    pub allowed: bool,
+    pub maximum_charge_current_a: f32,
+    pub voltage_rollback_start_v: f32,
+    pub absolute_voltage_limit_v: f32,
+    pub limitation_reason: BatteryRegenLimitation,
+}
+```
+
+The battery does not decide braking feel. It decides what electrical charging
+is currently acceptable.
+
+The regenerative-braking controller combines this capability with motor,
+controller, wheel-speed, and rear-wheel limits.
+
+Detailed rider intent, speed scheduling, state control, and braking validation
+are defined in [Regenerative Braking](regenerative_braking.md).
+
+---
+
+## Regen Permission Logic
+
+```mermaid
+flowchart TD
+    Request[Valid Regen Request]
+    Voltage[Pack Voltage Valid]
+    Temperature[Charge Temperature Valid]
+    BMS[BMS Permits Charging]
+    Current[Charge Current Available]
+    Telemetry[Telemetry Valid]
+    Permit[Permit Bounded Regen]
+    Inhibit[Reduce or Inhibit Regen]
+
+    Request --> Voltage
+    Voltage --> Temperature
+    Temperature --> BMS
+    BMS --> Current
+    Current --> Telemetry
+    Telemetry --> Permit
+
+    Voltage --> Inhibit
+    Temperature --> Inhibit
+    BMS --> Inhibit
+    Current --> Inhibit
+    Telemetry --> Inhibit
+```
+
+Regen must be reduced or inhibited when:
+
+- Pack voltage approaches the configured ceiling.
+- Any cell group approaches overvoltage.
+- Battery temperature is outside the validated charge range.
+- BMS charge permission is unavailable.
+- Battery-current or voltage telemetry is stale.
+- The controller or communication path is unhealthy.
+- Regen current exceeds the validated pack limit.
+- The battery is disconnected.
+- A battery fault is active.
+
+Mechanical braking remains available whenever regen is restricted.
+
+---
+
+## Voltage and State-of-Charge Headroom
+
+A fully charged 10S pack is approximately 42 V. Regen may be reduced or
+unavailable near this ceiling.
+
+The design should evaluate:
+
+- Voltage rollback below the absolute ceiling
+- Cell-group overvoltage margin
+- Controller response near full charge
+- Whether normal commute charging should stop below 100% when early-route regen
+  is expected
+- How quickly load-induced voltage sag creates usable headroom
+- Communication to the rider when regen is unavailable
+
+No reduced charge ceiling is frozen at this stage.
+
+---
+
+## Charge-Current Limits
+
+The cell's published charge capability is not the permitted pack regen limit.
+
+The validated limit is the minimum of:
+
+```text
+Cell limit
+BMS limit
+Interconnect limit
+Fuse and connector limit
+Temperature-dependent limit
+Controller limit
+Pack-voltage limit
+```
+
+Generation one should start with a conservative pack-level regen limit and
+increase it only after bench measurement of:
+
+- Cell-group voltage response
+- Pack voltage rise
+- BMS behaviour
+- Connector temperature
+- Interconnect temperature
+- Battery temperature
+- Current-sensor accuracy
+
+---
+
+## Temperature Management
+
+At least two battery-temperature measurements are recommended:
+
+```text
+Sensor 1
+    Interior cell group or predicted hotspot
+
+Sensor 2
+    BMS, fuse, or connector region
+```
+
+Additional candidates:
+
+- Central cell in a seven-cell layer
+- Outer cell group
+- BMS power stage
+- Main connector
+
+Desired behaviour:
+
+```text
+Cold battery
+    Reduce discharge power
+    Reduce or inhibit regen
+
+Normal battery
+    Use validated charge and discharge limits
+
+Warm battery
+    Reduce both limits
+
+Hot battery
+    Inhibit affected energy flow
+```
+
+Published cell temperature capability must not be copied directly into the pack
+control policy without pack-level validation.
 
 ---
 
@@ -746,12 +645,12 @@ needs to open the current path.
 
 ```mermaid
 flowchart TD
-    Policy["Ferrous Drive Energy Policy"]
-    Controller["Controller Limits"]
-    BMS["BMS Protection"]
-    Fuse["Pack Fuse"]
-    Isolation["Electrical Isolation"]
-    Mechanical["Mechanical Protection"]
+    Policy[Ferrous Drive Energy Policy]
+    Controller[Motor Controller Limits]
+    BMS[BMS Protection]
+    Fuse[Pack Fuse]
+    Isolation[Electrical Isolation]
+    Mechanical[Mechanical Protection]
 
     Policy --> Controller
     Controller --> BMS
@@ -762,12 +661,13 @@ flowchart TD
 
 ### Ferrous Drive policy
 
-- Energy budgeting
-- Temperature-aware power reduction
-- Regen permission
 - Arrival reserve
-- Graceful low-energy behaviour
-- Logging and diagnostics
+- Temperature-aware power limits
+- Regen permission
+- Voltage rollback request
+- Energy accounting
+- Sensor freshness
+- Diagnostics
 
 ### Controller protection
 
@@ -775,145 +675,57 @@ flowchart TD
 - Regen-current limits
 - Low-voltage rollback
 - Maximum regen voltage
-- Motor phase-current limits
-- Regen phase-current limits
+- Phase-current limits
 - Motor thermal rollback
 - Controller thermal rollback
 
 ### Independent protection
 
-- BMS protection
-- Pack fuse
+- BMS
+- Fuse
 - Electrical isolation
+- Cell retention
 - Impact protection
-- Secure mechanical retention
-
----
-
-## Regenerative Braking
-
-Regenerative charging is a core battery requirement.
-
-```mermaid
-flowchart TD
-    Request["Regen Requested"]
-    Voltage["Pack Voltage Valid"]
-    Temperature["Temperature Valid"]
-    BMS["BMS Permits Charging"]
-    Current["Charge Current Available"]
-    Controller["Controller Healthy"]
-    Permit["Permit Bounded Regen"]
-    Inhibit["Inhibit Regen"]
-
-    Request --> Voltage
-    Voltage --> Temperature
-    Temperature --> BMS
-    BMS --> Current
-    Current --> Controller
-    Controller --> Permit
-
-    Voltage --> Inhibit
-    Temperature --> Inhibit
-    BMS --> Inhibit
-    Current --> Inhibit
-    Controller --> Inhibit
-```
-
-Regen should be reduced or inhibited when:
-
-- Pack voltage approaches the configured ceiling
-- Any cell group approaches overvoltage
-- Pack temperature is outside the validated charge range
-- BMS charge permission is unavailable
-- BMS telemetry is stale
-- Battery-current telemetry is invalid
-- Controller communications are unhealthy
-- Regen current exceeds the validated limit
-- The battery is disconnected
-- A battery or controller fault is active
-
-The first energized prototype should use conservative regenerative
-limits that are increased only through measured validation.
-
----
-
-## Temperature Management
-
-At least two battery temperature measurements are recommended:
-
-```text
-Sensor 1
-    Interior cell group or predicted hotspot
-
-Sensor 2
-    Electronics, fuse, or connector region
-```
-
-Additional candidates include:
-
-- Outer cell group
-- BMS power stage
-- Main fuse
-- Main connector
-- Central cell in a seven-cell layer
-
-Desired behaviour:
-
-```text
-Cold battery
-    Reduce discharge power
-    Reduce or inhibit regen
-
-Normal battery
-    Use validated limits
-
-Warm battery
-    Reduce discharge and regen limits
-
-Hot battery
-    Inhibit energy flow
-```
-
-Thresholds must be established through cell, BMS, and pack-level
-validation.
+- Secure mounting
 
 ---
 
 ## Controller Integration
 
-Initial prototype controller:
+Initial controller candidate:
 
 ```text
 Phaserunner V6 L10
 ```
 
-Potential integrated-bike controller:
+Potential integrated controller candidate:
 
 ```text
 Baserunner V6 L10
 ```
 
-Controller configuration must eventually include:
+Required controller configuration includes:
 
-- Maximum battery current
-- Maximum regenerative battery current
-- Low-voltage rollback start
-- Low-voltage cutoff
-- Maximum regen voltage start
-- Maximum regen voltage end
-- Forward phase-current limit
-- Regen phase-current limit
-- Maximum power
+- Maximum battery discharge current
+- Maximum battery regen current
+- Low-voltage rollback
+- Maximum regen-voltage rollback
+- Absolute voltage limits
+- Positive and negative phase-current limits
 - Motor thermal rollback
 - Controller thermal rollback
+- Motor speed and temperature telemetry
+- Deterministic command path
+- Communication watchdog
 
-The weakest validated component determines the system limit.
+Controller capability must be verified against the selected firmware and
+integration interface.
 
 ---
 
-## Power and Current Targets
+## Power and Current Planning
 
-The prototype should operate well below the maximum P50B capability.
+Normal operation should remain well below the maximum cell capability.
 
 ```text
 Normal average battery power
@@ -921,15 +733,9 @@ Normal average battery power
 
 Short higher-assist demand
     Approximately 500–600 W
-
-Initial discharge-current limit
-    Defined after BMS and interconnect selection
-
-Initial regen-current limit
-    Conservative, then increased through testing
 ```
 
-Approximate current at 36 V:
+Approximate pack current at 36 V:
 
 ```text
 250 W
@@ -945,63 +751,93 @@ Approximate current at 36 V:
     8.3 A per parallel cell
 ```
 
-Actual current varies with pack voltage and controller efficiency.
+Actual current depends on pack voltage and controller efficiency.
+
+Regen current values remain open pending BMS, connector, interconnect, and
+thermal validation.
 
 ---
 
-## Energy and Range Model
+## Energy and Route Model
 
 ### Nominal energy
 
 ```text
 20 cells × 18 Wh
-= 360 Wh nominal
+    360 Wh nominal
 ```
 
-The simulator should distinguish:
+Simulation should distinguish:
 
 - Nominal energy
-- Configured usable energy
+- Planning usable energy
 - Measured available energy
 - Arrival reserve
-- Regenerated energy
+- Gross propulsion energy
+- Descent regen
+- Junction regen
+- Net battery energy
 
-### Preliminary commute model
+### Planning usable energy
 
-The current 30 km/h Commute-mode model assumes:
-
-```text
-Average battery power
-    Approximately 247 W
-
-Consumption
-    Approximately 8.2 Wh/km
-
-Mild-weather range
-    Approximately 39 km
-
-Provisional winter range
-    Approximately 33 km
-```
-
-These figures are modelling assumptions, not measured performance.
-
-Ferrous Drive should eventually use arrival-reserve management:
+Current simulations use:
 
 ```text
-Remaining distance
-        +
-Remaining usable energy
-        +
-Recent consumption
-        ↓
-Predicted arrival reserve
-        ↓
-Assistance adjustment
+Planning usable energy
+    320 Wh
 ```
 
-Regen should initially contribute zero to range forecasting until
-route-specific measurements are available.
+This remains a modelling parameter, not a validated pack result.
+
+### Recorded commute baseline
+
+The current route model uses two approximately 35 km recorded rides with:
+
+- WTB Vulpine 36c tyres
+- Aluminium wheels
+- Approximately 236 m ascent
+- Approximately 232 m descent
+
+### Provisional route-informed recovery
+
+| Direction | Descent recovery | Junction recovery | Total |
+|---|---:|---:|---:|
+| Outbound | ~18 Wh | ~7 Wh | ~25 Wh |
+| Return | ~23 Wh | ~8 Wh | ~31 Wh |
+| Round trip | ~41 Wh | ~15 Wh | ~55–56 Wh |
+
+Sensitivity range:
+
+```text
+Conservative round trip
+    Approximately 40 Wh
+
+Planning case
+    Approximately 55 Wh
+
+Optimistic round trip
+    Approximately 65 Wh
+```
+
+These values are inferred from GPS speed and elevation. They are not measured
+battery recovery and must be replaced by physical voltage and current data.
+
+---
+
+## Neutral Ride Energy Interaction
+
+For a direct-drive installation, Neutral Ride compensates only for:
+
+- Magnetic motor drag
+- Added-system rolling resistance
+- Added-system climbing cost
+
+Current modelling estimates approximately 30–40 Wh of compensation per commute
+leg. Route-informed regen may recover a substantial part of that energy, but
+Neutral Ride must not apply hidden braking to force energy neutrality.
+
+The battery reports recovered energy; the braking subsystem decides when regen
+is valid; the ride-mode controller must not manufacture braking events.
 
 ---
 
@@ -1011,10 +847,8 @@ route-specific measurements are available.
 
 ```text
 20 × 71 g maximum
-= 1,420 g maximum
+    1,420 g maximum
 ```
-
-### Working mass budget
 
 | Component | Working allowance | Preliminary range |
 |---|---:|---:|
@@ -1024,68 +858,68 @@ route-specific measurements are available.
 | BMS and balance wiring | 35 g | 25–50 g |
 | Pack fuse and holder | 8 g | 5–12 g |
 | Main wiring and connector | 22 g | 15–35 g |
-| Temperature sensing | 3 g | 2–6 g |
-| Printed dielectric skeleton | 45 g | 30–65 g |
+| Temperature and current sensing | 5 g | 3–10 g |
+| Printed cell carrier | 45 g | 30–65 g |
 | Carbon shell and resin | 55 g | 40–80 g |
 | End caps and impact protection | 30 g | 20–45 g |
 | Mounting and retention | 40 g | 25–60 g |
 | Adhesive and cushioning | 15 g | 10–25 g |
-| **Working estimate** | **1,710 g** | **Approximately 1,622–1,856 g** |
+| **Working estimate** | **1,712 g** | **Approximately 1,623–1,865 g** |
 
-### Mass targets
+Mass targets:
 
 ```text
 Optimization goal
     1.70 kg
 
-Working design target
+Working target
     1.75 kg or less
 
 Initial prototype ceiling
     1.85 kg
 ```
 
-The mass target must not be achieved by removing required protection.
+Protection must not be removed to meet the mass target.
 
 ---
 
 ## Telemetry
 
-### Required battery telemetry
+### Required
 
 - Pack voltage
-- Battery current
-- Regenerative current
+- Bidirectional battery current
+- Gross discharged energy
+- Gross regenerated energy
+- Net battery energy
 - At least two temperatures
 - BMS charge permission
 - BMS discharge permission
 - BMS fault state
 - Controller battery limits
-- Controller communications health
+- Communication health
 
-### Desired telemetry
+### Desired
 
 - Individual group voltages
 - State of charge
 - State of health
-- Discharged watt-hours
-- Regenerated watt-hours
-- Maximum current
-- Minimum voltage
+- Maximum discharge current
+- Maximum regen current
+- Minimum pack voltage
+- Maximum pack voltage
 - Maximum temperature
 - Cell imbalance
 - Fault history
+- Constraint-limited regen energy
 
 ---
 
 ## Charging
 
-The pack requires controlled charging for a 10S lithium-ion battery.
+The pack requires controlled 10S lithium-ion charging.
 
 ```text
-Series count
-    10S
-
 Maximum pack voltage
     42 V
 
@@ -1101,24 +935,21 @@ BMS protection
 
 The design should investigate:
 
-- Pack-level charging connector
-- Charger communication
-- BMS charge permission
-- Connector keying
-- Moisture protection
 - Off-bike charging
-- Reduced charge ceiling for longevity
+- Keyed and weather-resistant connector
+- BMS charge permission
+- Reduced everyday charge ceiling
 - Post-ride cooldown
-- Office charging practicality
+- Early-route regen headroom
+- Office-charging practicality
 
 ---
 
 ## Mechanical Mounting
 
-A standard friction-only bottle cage is not sufficient for a battery
-of this mass.
+A friction-only bottle cage is not sufficient for a battery of this mass.
 
-The mounting system must resist:
+The mount must resist:
 
 - Braking loads
 - Acceleration loads
@@ -1126,30 +957,26 @@ The mounting system must resist:
 - Pothole impacts
 - Lateral vibration
 - Repeated removal
-- Partial or incorrect insertion
+- Incorrect or partial insertion
 
-Mounting principles:
+Principles:
 
 - Loads enter through a dedicated mounting spine.
 - The carbon shell distributes load into the spine.
 - Electrical contacts do not provide primary retention.
-- The pack has positive and secondary retention.
+- Positive and secondary retention are required.
 - Removal requires deliberate action.
-- Incorrect insertion is mechanically prevented or obvious.
+- Incorrect insertion is prevented or obvious.
 
 ---
 
 ## Environmental Requirements
 
-The prototype should be designed for year-round Swedish commuting.
+The pack is intended for year-round Swedish commuting, including:
 
-Relevant conditions include:
-
-- Rain
-- Road spray
+- Rain and road spray
 - Condensation
-- Mud
-- Dust
+- Mud and dust
 - Salt exposure
 - Freeze-thaw cycling
 - Cold-soaked startup
@@ -1159,8 +986,8 @@ Relevant conditions include:
 - UV exposure
 - Bicycle washing
 
-The first prototype must not claim a formal ingress-protection rating
-without standardized testing.
+No formal ingress-protection rating should be claimed without standardized
+testing.
 
 ---
 
@@ -1168,31 +995,24 @@ without standardized testing.
 
 ### Stage 1: CAD packaging
 
-- Confirm cell geometry
+- Confirm maximum cell geometry
 - Model `7 + 6 + 7`
-- Model maximum tolerances
-- Allocate electronics cavity
-- Check frame fit
-- Check removal path
+- Allocate electronics and wiring cavity
+- Check frame fit and removal path
 - Estimate mass and centre of gravity
 
 ### Stage 2: Inert physical model
 
 - Use safe dummy cells
-- Validate enclosure dimensions
-- Validate mounting
-- Validate removal
-- Validate clearances
+- Validate enclosure and mounting
+- Validate clearances and retention
 - Measure structural-component mass
 
-### Stage 3: Mechanical enclosure prototype
+### Stage 3: Mechanical enclosure
 
-- Produce printed skeleton
+- Produce printed carrier
 - Produce isolated shell concept
-- Validate fit
-- Test mounting loads
-- Test vibration
-- Test impact protection
+- Test mounting, vibration, and impact protection
 - Inspect abrasion points
 
 ### Stage 4: Instrumented electrical prototype
@@ -1206,22 +1026,22 @@ Only after review of:
 - Interconnects
 - Connector
 - Isolation
-- Charging path
+- Charge path
 - Regen path
 
 ### Stage 5: Bench validation
 
 - Controlled discharge
-- Controlled charging
-- Regen simulation
+- Controlled charge
+- Simulated regen
+- Voltage-rise measurement
 - Thermal measurement
-- Voltage-sag measurement
 - BMS fault testing
 - Controller limit testing
 
 ### Stage 6: Bicycle integration
 
-Only after earlier stages pass their validation gates.
+Only after earlier validation gates pass.
 
 ---
 
@@ -1231,34 +1051,41 @@ Only after earlier stages pass their validation gates.
 
 - [ ] Verify authentic P50B sourcing
 - [ ] Record production batch
-- [ ] Measure cell mass
-- [ ] Measure open-circuit voltage
-- [ ] Measure internal resistance
-- [ ] Measure usable capacity
+- [ ] Measure cell mass and open-circuit voltage
+- [ ] Measure internal resistance and usable capacity
 - [ ] Match cells before assembly
 
 ### Electrical validation
 
-- [ ] Verify series-group voltages
-- [ ] Verify pack voltage
-- [ ] Verify BMS thresholds
-- [ ] Verify balancing
+- [ ] Verify series-group and pack voltage
+- [ ] Verify BMS thresholds and balancing
 - [ ] Verify discharge current
 - [ ] Verify regen current
 - [ ] Verify fuse selection
-- [ ] Verify connector temperature
-- [ ] Verify interconnect temperature
+- [ ] Verify connector and interconnect temperature
 - [ ] Verify voltage sag
+- [ ] Verify voltage rise under regen
 - [ ] Verify low-voltage rollback
 - [ ] Verify regen-voltage rollback
-- [ ] Verify communications-loss behaviour
-- [ ] Verify controller safe state
+- [ ] Verify communication-loss behaviour
+
+### Regen validation
+
+- [ ] Verify BMS charge permission during regen
+- [ ] Verify near-full battery rollback
+- [ ] Verify full-battery mechanical-only behaviour
+- [ ] Verify cold-battery regen limit
+- [ ] Verify hot-battery regen limit
+- [ ] Verify bidirectional current measurement
+- [ ] Verify gross and net energy accounting
+- [ ] Verify controller response before BMS protection
+- [ ] Verify abrupt charge-permission loss
 
 ### Thermal validation
 
 - [ ] Validate sensor placement
 - [ ] Characterize steady discharge
-- [ ] Characterize power transients
+- [ ] Characterize assist transients
 - [ ] Characterize repeated regen
 - [ ] Validate cold-soaked operation
 - [ ] Validate charging behaviour
@@ -1268,8 +1095,7 @@ Only after earlier stages pass their validation gates.
 
 - [ ] Measure finished mass
 - [ ] Validate cell retention
-- [ ] Validate axial protection
-- [ ] Validate radial protection
+- [ ] Validate axial and radial protection
 - [ ] Validate mounting retention
 - [ ] Validate connector strain relief
 - [ ] Perform vibration testing
@@ -1287,16 +1113,17 @@ Only after earlier stages pass their validation gates.
 - [ ] Connector contamination testing
 - [ ] Post-test insulation testing
 
-### Range validation
+### Route validation
 
-- [ ] Recovery-mode consumption
-- [ ] Commute-mode consumption
-- [ ] Sport-mode consumption
-- [ ] Cold-weather consumption
-- [ ] Headwind consumption
-- [ ] Low-state-of-charge performance
+- [ ] Active Recovery energy use
+- [ ] Commute energy use
+- [ ] Tempo transient energy use
+- [ ] Neutral Ride compensation
+- [ ] Descent regen measurement
+- [ ] Junction regen measurement
+- [ ] Cold-weather usable energy
 - [ ] Arrival-reserve prediction
-- [ ] Regen energy recovery
+- [ ] Outbound and return comparison
 - [ ] 35 km commute validation
 
 ---
@@ -1304,50 +1131,47 @@ Only after earlier stages pass their validation gates.
 ## Known Unknowns
 
 - Exact finished dimensions
-- Actual cell-batch mass
-- Actual pack impedance
-- Exact BMS
-- BMS regen behaviour
-- BMS telemetry
-- Fuse selection
-- Connector selection
+- Actual cell-batch mass and impedance
+- Exact BMS and protocol
+- Common-port or separate-port BMS
+- BMS behaviour during regen
+- Pack-level maximum regen current
+- Voltage rollback thresholds
+- Cold and hot regen limits
+- Fuse and connector selection
 - Charger interface
 - Interconnect geometry
 - Physical series-group mapping
-- Printed skeleton material
-- Carbon laminate design
-- Carbon isolation system
-- End-cap design
+- Printed carrier material
+- Carbon laminate and isolation system
+- End-cap and pressure-relief design
 - Mounting mechanism
-- Weather-sealing method
-- Pressure-relief strategy
+- Environmental sealing
 - Thermal behaviour
 - Cold usable energy
-- Cold regen acceptance
-- Ageing behaviour
-- Repair strategy
-- End-of-life disassembly
+- State-of-charge estimation
+- Repair and end-of-life strategy
 - Applicable battery and transport requirements
 
 ---
 
 ## Non-Goals
 
-The first prototype is not intended to:
+The first prototype will not:
 
 - Use maximum published cell current
 - Maximize motor output
 - Replace controller protection
 - Replace BMS protection with software
-- Use carbon as electrical insulation
+- Use carbon as insulation
 - Use cell cans structurally
 - Claim an ingress-protection rating without testing
-- Support cell-level user servicing
-- Support hot-swapping
+- Support hot swapping
 - Support multiple parallel batteries
 - Claim production readiness
 - Claim regulatory certification
-- Sacrifice safety to meet a mass target
+- Sacrifice protection to meet mass
+- Depend on regen for safe braking
 
 ---
 
@@ -1387,9 +1211,15 @@ Nominal energy
     360 Wh
 
 Structural concept
-    Printed dielectric skeleton
+    Printed polymer cell carrier
+    Dedicated electrical barriers
     Electrically isolated carbon shell
     Reinforced mounting spine
+
+Electrical concept
+    Bidirectional current path
+    Regen-capable BMS
+    Independent charge and discharge capability limits
 
 Mass targets
     1.70 kg optimization goal
@@ -1397,28 +1227,20 @@ Mass targets
     1.85 kg prototype ceiling
 ```
 
-The P50B was selected because stable winter performance, lower voltage
-sag, regenerative-current headroom, and predictable transient behaviour
-are more valuable than minimizing cell mass alone.
-
-The mild-oval cross-section was selected because it follows the natural
-seven-cell cluster more efficiently than a perfect cylinder and provides
-a better frame-facing surface for mounting.
-
-The design remains provisional until the cells, BMS, interconnects,
-connector, enclosure, mounting system, thermal behaviour, and
-regenerative-current path have been validated.
+The design remains provisional until the cells, BMS, current path,
+interconnects, connector, enclosure, mounting, thermal behaviour, and
+regenerative-charging behaviour have been validated.
 
 ---
 
 ## References
 
-- [Molicel P50B product information](https://www.molicel.com/inr-21700-p50b/)
+- [Molicel P50B product information](https://www.molicel.com/product/inr-21700-p50b/)
 - [Molicel P50B data sheet](https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf)
-- [MAHLE eX1 external battery](https://mahle-smartbike.com/e185-range-extender/)
-- [Grin Baserunner product information](https://ebikes.ca/product-info/grin-products/baserunner.html)
-- [Grin Phaserunner product information](https://ebikes.ca/product-info/grin-products/phaserunner.html)
+- [Grin Phaserunner](https://ebikes.ca/product-info/grin-products/phaserunner.html)
+- [Grin All-Axle Motor](https://ebikes.ca/product-info/grin-products/all-axle-hub-motor.html)
 - [Architecture](architecture.md)
-- decision_log.md
-- assumptions.md
-- validation_matrix.md
+- [Regenerative Braking](regenerative_braking.md)
+- [Assumptions](assumptions.md)
+- [Validation Matrix](validation_matrix.md)
+- [Decision Log](decision_log.md)
