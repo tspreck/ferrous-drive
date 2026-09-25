@@ -1,4 +1,4 @@
-# Ferrous Drive 🚲🦀⚙️
+# Ferrous Drive 🚲🦀⚡🔋
 
 [![Rust](https://img.shields.io/badge/Rust-Language-orange?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/License-See%20LICENSE-blue)](LICENSE)
