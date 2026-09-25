@@ -408,14 +408,13 @@ Current focus:
 
 Not yet complete:
 
-- Production hardware
+- Prototype hardware
 - Validated brake-lever sensing
 - Selected BMS
 - Validated regen current and speed maps
 - Controller protocol integration
 - Closed-course testing
 - Road validation
-- Regulatory assessment
 
 ---
 
