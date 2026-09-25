@@ -239,9 +239,9 @@ Expresses rider intent through four profiles:
 | Mode | Purpose | Expected rider input |
 |---|---|---:|
 | Neutral Ride | Cancel only installed-system penalties | Unrestricted |
-| Active Recovery | Preserve a deliberately easy physiological load | 50–100 W initial range |
-| Commute | Maintain a sustainable, repeatable journey | 100–200 W initial range |
-| Tempo | Reward productive rider effort near an adaptive sweet spot | 200–300 W initial range |
+| Active Recovery | Preserve a deliberately easy physiological load | 50–150 W initial range |
+| Commute | Maintain a sustainable, repeatable journey | 150–250 W initial range |
+| Tempo | Reward productive rider effort near an adaptive sweet spot | 250–350 W initial range |
 
 These values are provisional planning bands, not permanent prescriptions.
 
