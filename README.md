@@ -181,6 +181,45 @@ The first coding milestone is a clean Rust workspace with:
 - Unit tests
 - GitHub Actions verification
 
+What the Hub owns
+
+    ride-mode orchestration;
+    Tre Pulse and reward state;
+    Trinity Ring behaviour;
+    capacitive-touch interaction;
+    lighting coordination;
+    telemetry and diagnostics;
+    power-state coordination;
+    future peripheral and drive interfaces.
+
+What energy modules own
+
+    cell chemistry and configuration;
+    BMS and cell protection;
+    module-level electrical limits;
+    safe charging requirements;
+    optional module telemetry.
+
+Rider experience
+
+Ride computer
+    Navigation, recording and detailed metrics
+
+Trinity Ring
+    Behaviour, progress, consistency and rewards
+
+Ferrous Drive is designed so the rider can ride on feel and review detailed numbers afterwards.
+Current focus
+
+Ferrous Hub V0.1
+    nRF54L15 DK
+    24-LED Trinity Ring
+    capacitive touch
+    dedicated power and mode indicators
+    lighting-state control
+
+P2600 provides the immediate winter-lighting solution and serves as the first serious Ferrous Drive peripheral. Experimental P60B energy modules remain a parallel learning track rather than a prerequisite for Hub development.
+
 ## Documentation
 
 - [Architecture](docs/architecture.md)
