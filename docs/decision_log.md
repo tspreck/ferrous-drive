@@ -1,547 +1,526 @@
-# Decision Log
+# Ferrous Drive Decision Log
 
-This log preserves the reasoning behind significant Ferrous Drive decisions.
-It records both accepted direction and proposed choices that still require
-simulation, bench work, or rider validation.
+This document records project-level decisions that materially affect Ferrous Drive architecture, behaviour, validation, hardware direction, or contributor workflow.
 
-## Status Definitions
+The log preserves both the decision and its rationale so future work does not depend on chat history or undocumented assumptions.
+
+---
+
+## Decision status
 
 | Status | Meaning |
 |---|---|
-| `ACCEPTED` | Current architectural direction |
-| `PROPOSED` | Preferred direction, not yet sufficiently validated |
-| `SUPERSEDED` | Replaced but retained for historical context |
-| `REJECTED` | Considered and deliberately not pursued |
+| Proposed | Under active review on an idea or feature branch |
+| Accepted | Current project direction |
+| Superseded | Replaced by a later decision |
+| Deferred | Intentionally postponed |
+| Rejected | Considered but not adopted |
 
 ---
 
-## FD-001: Use Rust for the Ferrous Drive Platform
+## Architectural principles
 
-**Status:** `ACCEPTED`
+The following principles apply across all current decisions:
 
-### Decision
-
-Implement Ferrous Drive in Rust.
-
-### Why
-
-- Strong type and memory-safety model
-- Suitable for shared desktop and embedded development
-- Supports deterministic and allocation-free control logic
-- Encourages explicit error and state handling
-- Aligns with the project's open-source and reusable-platform goals
-
-### Consequences
-
-- The portable core should support `no_std`.
-- Hardware, runtime, and protocol concerns remain outside the core.
-- Desktop simulation and embedded adapters share domain logic.
+1. Safety constraints override rider experience, rewards, and visual behaviour.
+2. Core logic should remain deterministic, portable, and testable away from the bicycle.
+3. Board-specific drivers must remain behind explicit interfaces.
+4. Experimental assumptions must be labelled and validated before becoming trusted.
+5. Major architecture changes should preserve their rationale and migration path.
+6. Detailed ride metrics belong on the ride computer and in post-ride analysis.
+7. Ferrous Drive should reduce friction in both development and riding.
 
 ---
 
-## FD-002: Develop Simulation First
+## 2026-10-06: Centre Ferrous Drive around Ferrous Hub
 
-**Status:** `ACCEPTED`
+**Status:** Proposed  
+**Branch:** `idea/ferrous-hub`
 
-### Decision
+### Context
 
-Use the desktop simulator as the primary development environment before moving
-control logic onto a ridden bicycle.
+Ferrous Drive initially treated battery development as the central enabling project. Lighting, power conversion, monitoring, and future drive integration consequently depended on completion of an experimental battery pack.
 
-### Why
+That dependency placed too much uncertainty on the critical path:
 
-Ferrous Drive contains safety-relevant, physiological, energy, and behavioural
-logic that benefits from repeatability and explanation before hardware testing.
+- reclaimed ES2 cell condition was unknown;
+- winter lighting depended on battery validation;
+- boost conversion, charging, protection, and enclosure work all had to succeed first;
+- Tre Pulse and local interaction lacked a stable hardware home.
 
-### Consequences
-
-- Identical input and configuration should produce identical output.
-- Route replay, synthetic signals, and fault injection are first-class tools.
-- Physical testing progresses through explicit validation gates.
-
----
-
-## FD-003: Keep the Domain Core Controller Independent
-
-**Status:** `ACCEPTED`
+The P2600 loaded kit now provides a complete, immediately usable winter-lighting solution. This removes safe winter lighting from the experimental battery critical path while preserving battery-module development as a separate learning track.
 
 ### Decision
 
-Represent rider state, behaviour, battery capability, and torque intent through
-portable domain types rather than controller-specific commands.
-
-### Why
-
-Ferrous Drive should remain reusable and testable without a particular motor
-controller or MCU.
-
-### Consequences
-
-- Controller protocols live in adapters.
-- The core produces bounded intent rather than wire-level commands.
-- Unsupported drive capabilities are disabled explicitly.
-
----
-
-## FD-004: Use the Nordic nRF54L15 DK as the Initial Embedded Platform
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Use the Nordic nRF54L15 DK for the first embedded prototype.
-
-### Why
-
-The project requires wireless sensor integration, deterministic control,
-controller communication, and sufficient development visibility.
-
-### Consequences
-
-- Board-specific code remains outside the portable core.
-- Embedded support follows the first desktop Rust milestone.
-- Runtime and HAL compatibility require a focused technical spike.
-
----
-
-## FD-005: Prefer RTIC and Fixed-Capacity Data
-
-**Status:** `PROPOSED`
-
-### Decision
-
-Use RTIC as the preferred embedded scheduling model and `heapless` for bounded
-collections where capacity is meaningful.
-
-### Why
-
-- Explicit priorities and shared resources
-- Deterministic task structure
-- Bounded memory use
-- Explicit overflow behaviour
-
-### Consequences
-
-- RTIC support on the selected platform must be proven.
-- Safety-critical state must not depend on a lossy general-purpose queue.
-- Capacity values become part of system design and validation.
-
----
-
-## FD-006: Use the Grin V3 Rear All-Axle 6T as the Active Drive Baseline
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Use the Grin V3 Rear All-Axle 6T direct-drive motor and a compatible headless
-Grin controller as the active reference implementation.
-
-### Why
-
-The platform supports the project's current goals:
-
-- Regenerative braking
-- Integrated rider torque and pedal sensing
-- Motor-temperature telemetry
-- Positive and negative torque control
-- Rich controller instrumentation
-
-### Consequences
-
-- Direct-drive drag must be managed.
-- Rear-wheel-only regen requires conservative limits.
-- Controller command, telemetry, and watchdog behaviour must be verified.
-- Earlier geared-hub investigation becomes historical exploration.
-
----
-
-## FD-007: Retain the 10S2P Molicel P50B Battery Baseline
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Retain the 20-cell Molicel P50B battery concept:
+Ferrous Drive will adopt a hub-centred architecture.
 
 ```text
-10S2P
-36 V nominal
-42 V full charge
-10 Ah
-360 Wh nominal
-7 + 6 + 7 physical layers
+Interchangeable Energy Modules
+              ↓
+         Ferrous Hub
+           nRF54
+              ↓
+ Trinity Ring + Touch Interface
+              ↓
+ Lighting, Telemetry and Peripherals
+              ↓
+   Future Ferrous Drive System
 ```
 
-### Why
+The Ferrous Hub becomes the architectural centre of the platform.
 
-The pack balances range, winter performance, voltage stability, transient
-capability, and regenerative-charge headroom.
+### Ferrous Hub responsibilities
+
+The Hub owns:
+
+- system and ride-mode orchestration;
+- Tre Pulse accumulation and reward state;
+- local state machines;
+- Trinity Ring semantic output;
+- capacitive-touch interpretation;
+- lighting coordination;
+- telemetry aggregation and diagnostics;
+- power-state coordination;
+- peripheral health monitoring;
+- future UART and CAN integration boundaries;
+- future drive-controller command boundaries.
+
+The Hub does not own:
+
+- battery chemistry;
+- cell selection;
+- series or parallel cell configuration;
+- cell balancing;
+- cell-level protection;
+- final motor commutation;
+- route navigation;
+- detailed ride recording;
+- post-ride analysis.
 
 ### Consequences
 
-- The pack remains provisional until physically validated.
-- The battery is not down-sized from simulation alone.
-- Destination charging is considered acceptable for the commute mission.
-- Finished mass is expected around the current 1.70 to 1.85 kg target region.
+- Ferrous Hub V0.1 becomes the next primary development track.
+- Battery experiments continue in parallel rather than blocking Hub development.
+- Tre Pulse gains a stable hardware and software home.
+- Lighting, UI, telemetry, and interaction can evolve before the final custom PCB.
+- Energy modules can change without rewriting behavioural logic.
+- Hub power management and interface ownership become first-class design concerns.
+
+### Architectural invariants
+
+1. Battery chemistry must not leak into ride-mode or Tre Pulse logic.
+2. Core behaviour must not depend on one microcontroller board.
+3. Trinity Ring semantics must remain independent of the LED driver.
+4. Lighting must remain usable when optional telemetry is unavailable.
+5. P2600 must remain a functional standalone lighting solution.
+6. Energy modules must be replaceable without rewriting behavioural logic.
+7. Brake, electrical-fault, and power-safety inputs override rewards and visuals.
+8. Detailed metrics remain the responsibility of the ride computer and post-ride tools.
+9. Trinity Ring owns glanceable behaviour, progress, state, and rewards.
+10. Experimental hardware must not become an undocumented source-of-truth dependency.
+
+### Deferred decisions
+
+- production Ferrous Hub PCB;
+- final energy-module connector;
+- production CAN protocol;
+- final ANT+ representation;
+- complete touch-gesture vocabulary;
+- production enclosure;
+- final main drive pack;
+- final motor-controller interface.
 
 ---
 
-## FD-008: Use Three Rider Modes
+## 2026-10-06: Use P2600 as the immediate winter-lighting solution
 
-**Status:** `ACCEPTED`
+**Status:** Accepted
+
+### Context
+
+Reliable lighting is required for dark winter commutes. Existing backup lighting is insufficient or unreliable, and the Exposure light must be sent for repair.
+
+The alternative E2000 route required a separate battery, converter, charging solution, enclosure, and validation before it could solve the immediate safety problem.
 
 ### Decision
 
-Use three top-level rider modes:
+Purchase and use the P2600 loaded kit as the immediate standalone lighting solution.
+
+The kit includes the lamp, battery, charger, mount, and remote, allowing safe commuting without waiting for experimental Ferrous Drive battery work.
+
+### Consequences
+
+- winter lighting is removed from the prototype critical path;
+- the P2600 becomes the first serious Ferrous Drive peripheral;
+- Ferrous Hub can later coordinate lighting intent and feedback without making the lamp dependent on Hub firmware;
+- P60B module development remains useful but is no longer urgent;
+- the commercial battery and charger must not be modified for Hub V0.1.
+
+### Boundary
+
+For V0.1, Ferrous Drive may:
+
+- represent lighting state;
+- demonstrate lighting-control intent;
+- map touch input to a prototype lighting state machine;
+- log lighting-state transitions;
+- investigate a safe future control interface.
+
+For V0.1, Ferrous Drive must not:
+
+- open or modify the commercial battery;
+- replace or bypass its BMS;
+- bypass the supplied charger;
+- rely on undocumented connector pinouts;
+- make safe lighting dependent on experimental firmware.
+
+---
+
+## 2026-10-06: Treat batteries as interchangeable energy modules
+
+**Status:** Proposed  
+**Branch:** `idea/ferrous-hub`
+
+### Context
+
+A battery-centred architecture coupled platform behaviour to one chemistry, voltage, configuration, and development path. Ferrous Drive needs to support experimentation without allowing cell choices to define system behaviour.
+
+### Decision
+
+Battery packs will be treated as interchangeable energy modules behind a stable electrical and telemetry boundary.
+
+Current and future examples include:
+
+- P2600 Power Pack XL;
+- P60B 2S1P experimental module;
+- P60B 2S2P experimental module;
+- future main drive pack.
+
+Reclaimed ES2 cells are deprioritized because their condition, capacity, and degradation are uncertain.
+
+### Module ownership
+
+Each module owns:
+
+- chemistry and cell configuration;
+- BMS behaviour;
+- cell balancing;
+- over-voltage and under-voltage protection;
+- short-circuit and over-current protection;
+- module thermal limits;
+- safe charging requirements.
+
+Ferrous Hub owns:
+
+- platform power-state decisions;
+- load coordination;
+- optional telemetry consumption;
+- subsystem enable and disable requests;
+- user-visible power state;
+- future destination and operating reserve policy.
+
+### Consequences
+
+- P60B experimentation remains relevant.
+- P60B work is no longer a prerequisite for Ferrous Hub V0.1.
+- Hub V0.1 must operate with power-only or minimal module-presence information.
+- Rich BMS telemetry is optional rather than foundational.
+- Production voltage, connector, charging ownership, and hot-plug behaviour remain open.
+
+---
+
+## 2026-10-06: Make Trinity Ring the local behavioural interface
+
+**Status:** Proposed  
+**Branch:** `idea/ferrous-hub`
+
+### Context
+
+The rider normally uses a Garmin or Karoo mounted in front of the bars and does not want a phone living near the stem. Detailed numbers are useful for navigation, occasional checks, and post-ride analysis, but constant numerical feedback can distract from riding on feel.
+
+Ferrous Drive needs a small, glanceable interface for behaviour and motivation rather than another dashboard.
+
+### Decision
+
+Use a 24-LED addressable Trinity Ring as the primary local behavioural display.
+
+Use separate dedicated indicators for:
+
+- system power state;
+- selected ride mode.
+
+Place a capacitive-touch surface in the centre of the ring.
+
+### Trinity Ring responsibilities
+
+The ring communicates:
+
+- progress;
+- secured Tre Pulse milestones;
+- consistency;
+- reward readiness;
+- active rewards;
+- Golden rewards;
+- lighting state;
+- constrained operation;
+- warnings and faults.
+
+The ring does not primarily communicate:
+
+- numeric power;
+- battery percentages;
+- detailed statistics;
+- navigation;
+- post-ride analysis.
+
+### Interaction direction
+
+Initial prototype use:
 
 ```text
-Neutral
-Recovery
-Training
+Tap
+    Cycle lighting state
+
+Long press
+    Guarded system action
 ```
 
-### Why
-
-The three-mode model is simpler to understand and better represents rider
-intent than conventional e-bike assist levels.
-
-### Consequences
-
-- Neutral preserves natural cycling.
-- Recovery regulates a personalized low-intensity workload.
-- Training hosts structured earn-and-reward profiles.
-- Commute becomes a journey and energy context rather than a mode.
-- Tempo becomes a Training profile rather than a top-level mode.
-
-### Supersedes
-
-The previous Neutral Ride, Active Recovery, Commute, and Tempo mode set.
-
----
-
-## FD-009: Adopt Tre Pulse as the Shared Interaction Language
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Use Tre Pulse as Ferrous Drive's shared visual, behavioural, range, and reward
-language.
-
-### Why
-
-Tre Pulse creates one simple mental model across:
-
-- Three rider modes
-- Three interaction segments
-- Three battery-range layers
-- Three physical battery layers
-
-### Consequences
-
-- Tre Pulse becomes a first-class subsystem.
-- Detailed telemetry remains available outside the three-segment summary.
-- Colour must not be the only information channel.
-- The interaction model requires rider-comprehension testing.
-
----
-
-## FD-010: Introduce a Shared Tre Pulse Behaviour Engine
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Use one configurable engine for Recovery and Training accumulation, milestones,
-streaks, and rewards.
-
-### Why
-
-Recovery and Training share common mechanics:
-
-- Qualifying conditions
-- Grace and decay
-- Locked milestones
-- Completion detection
-- Reward authorization
-- Energy constraints
-
-### Consequences
-
-- Profiles become configuration and scoring rules rather than independent
-  control architectures.
-- The engine produces reward requests, not final torque commands.
-- Braking, battery protection, telemetry trust, and torque arbitration remain
-  independent.
-
----
-
-## FD-011: Define Recovery Relative to Rider Physiology
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Define Recovery through a named relative Zone 2 model rather than one universal
-wattage range.
-
-Possible anchors include:
-
-- FTP-relative power
-- Critical-Power-relative power
-- Heart-rate zones
-- LT1 or VT1 when available
-
-### Why
-
-Recovery intent depends on the rider's current physiology and the chosen zone
-model.
-
-### Consequences
-
-- Fixed power values remain examples or rider configuration.
-- Power describes external work.
-- Heart rate describes part of the internal response.
-- HRV provides readiness and fatigue context.
-
----
-
-## FD-012: Start Recovery at 1.0:1 and Adapt to 1.2:1
-
-**Status:** `PROPOSED`
-
-### Decision
-
-Use a `1.0:1` rider-to-motor baseline in Recovery. Trusted HRV, heart-rate,
-power, and drift trends may progressively permit support up to `1.2:1`.
-
-### Why
-
-A conservative baseline preserves rider ownership while giving the system room
-to respond to fatigue.
-
-### Consequences
-
-- HRV adjusts the permitted envelope rather than commanding torque directly.
-- Invalid HRV returns the system toward baseline.
-- Arrival reserve and safety limits may reduce the permitted ratio.
-- The values require simulation and rider validation.
-
----
-
-## FD-013: Treat Training Assistance as Earned
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Separate Training into qualifying work and a bounded assistance reward.
-
-### Why
-
-The motor becomes an immediate physical reward for productive work rather than
-a passive way to avoid the training stimulus.
-
-### Consequences
-
-- Earned reward assistance remains inactive during the work phase.
-- Required system-penalty compensation may remain available.
-- Valid pedalling remains required during the reward.
-- Braking cancels positive reward torque immediately.
-
----
-
-## FD-014: Begin with Tempo Tailwind and Anaerobic Shield Profiles
-
-**Status:** `PROPOSED`
-
-### Decision
-
-Use Tempo Tailwind and Anaerobic Shield as the first Training profile concepts.
-
-### Why
-
-They demonstrate two distinct use cases:
-
-- Cumulative sub-threshold time in zone
-- Committed higher-intensity effort with bounded recovery reward
-
-### Consequences
-
-- Target zones, point curves, grace, decay, and reward values remain
-  experimental.
-- Sports-science concepts and Ferrous Drive game parameters must remain
-  explicitly separated.
-
----
-
-## FD-015: Add the Three-Cycle Golden Streak
-
-**Status:** `PROPOSED`
-
-### Decision
-
-Unlock a Golden Super Reward after three consecutive valid Recovery or Training
-cycles.
-
-### First-Generation Rule
+Future candidate gestures:
 
 ```text
-Normal reward
-    1× duration
+Double tap
+    Change ride mode
 
-Golden Super Reward
-    2× duration
+Triple tap
+    Request a guarded function such as regen enable
+
+Long press
+    Context-dependent system function
 ```
 
-### Why
-
-The mechanic rewards consistency rather than only one completed effort.
+Future mappings remain proposals until gesture reliability and safety are validated.
 
 ### Consequences
 
-- The third accumulation cycle progressively turns Tre Pulse gold.
-- Peak assistance does not increase beyond the validated profile ceiling.
-- Triple duration remains deferred.
-- Safety interruptions should pause rather than unfairly break the streak.
-- The motivational and energy effects require validation.
+- 24 LEDs are preferred over a nine-LED ring for progress granularity and animation quality.
+- core logic should emit semantic display intent rather than raw LED frames;
+- brightness must support dark adaptation;
+- warning and fault states must override decorative animations;
+- colour cannot be the only state differentiator;
+- loss of the ring must not block safe lighting or shutdown behaviour.
 
 ---
 
-## FD-016: Protect Arrival Reserve Above Rewards
+## 2026-10-06: Keep nRF54L15 DK as the primary Ferrous Hub development platform
 
-**Status:** `ACCEPTED`
+**Status:** Accepted
+
+### Context
+
+The nRF54L15 DK is already available and supports continued development of the long-term platform. The Adafruit Feather nRF52832 offers an attractive compact form factor for prototype packaging, but changing boards should not require rewriting Ferrous Drive behaviour.
 
 ### Decision
 
-Authorize rewards only after predicting their impact on destination arrival
-energy.
+Continue primary Ferrous Hub development on the nRF54L15 DK.
 
-### Reward Outcomes
+Keep the Feather nRF52832 as an optional compact prototype target rather than the architectural centre.
+
+### Software boundary
+
+Portable core:
+
+- ride modes;
+- Tre Pulse;
+- rewards;
+- state machines;
+- lighting policy;
+- battery and power policy;
+- telemetry model;
+- fault policy.
+
+Board-specific adapters:
+
+- LED transport;
+- touch input;
+- timers and monotonic clock;
+- BLE and future ANT+ transport;
+- UART;
+- future CAN;
+- voltage and current sensing;
+- board power control.
+
+### Consequences
+
+- portability becomes an explicit acceptance criterion;
+- nRF54-specific APIs must not leak into core behaviour;
+- host-side tests remain the preferred validation path for state logic;
+- a future custom Hub PCB can reuse the same core;
+- the estimated portability target remains high, but must be demonstrated rather than assumed.
+
+---
+
+## 2026-10-06: Defer INA226 from essential hardware to optional instrumentation
+
+**Status:** Accepted
+
+### Context
+
+INA226 can measure voltage, current, and power and remains useful for rail monitoring, battery experiments, and subsystem validation.
+
+The P2600 purchase removes the need for Ferrous Hub V0.1 to depend on immediate custom lighting-pack instrumentation.
+
+### Decision
+
+Treat INA226 as useful optional instrumentation rather than required V0.1 hardware.
+
+### Consequences
+
+- Hub V0.1 must boot and demonstrate its core interaction model without INA226;
+- INA226 may later monitor the lighting rail, energy modules, or prototype subsystem loads;
+- absence or failure of the monitor must not block basic operation;
+- detailed power measurements remain valuable for bench validation.
+
+---
+
+## 2026-10-06: Separate detailed ride metrics from local behavioural feedback
+
+**Status:** Accepted
+
+### Context
+
+The rider prefers to ride primarily on feel, often keeping the ride computer display dark or in power-save mode. Detailed numbers remain valuable for navigation, occasional form checks, selected segments, and post-ride review.
+
+### Decision
+
+The ride computer owns:
+
+- navigation;
+- ride recording;
+- detailed metrics;
+- post-ride analysis.
+
+Ferrous Hub and Trinity Ring own:
+
+- mode and system state;
+- behavioural cues;
+- Tre Pulse progress;
+- reward feedback;
+- lighting-state feedback;
+- warnings and faults.
+
+### Consequences
+
+- Ferrous Drive must not require a phone mounted near the stem;
+- Trinity Ring designs should avoid becoming a miniature numeric dashboard;
+- ANT+ or BLE may later broadcast compact events and state, but local operation must remain independent;
+- detailed ride data remains available without dominating the riding experience.
+
+---
+
+## 2026-09-28: Use idea branches and early draft pull requests for major architecture changes
+
+**Status:** Accepted
+
+### Context
+
+Major changes can affect architecture, roadmap, assumptions, documentation, simulation behaviour, and future contributors. Editing the main branch directly risks incomplete migrations and loss of decision context.
+
+### Decision
+
+Project-wide or architectural changes will use:
 
 ```text
-Full
-Shortened
-Deferred
-Unavailable
-```
-
-### Consequences
-
-- Journey and reserve energy have priority over reward energy.
-- Tre Pulse explains constrained delivery.
-- A reward may be earned without being immediately deliverable.
-
----
-
-## FD-017: Keep Regenerative Braking Independent from Reward Logic
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Keep rider-triggered regenerative braking outside the Tre Pulse Behaviour Engine.
-
-### Why
-
-Braking authority must remain independent from training games, progress, and
-rewards.
-
-### Consequences
-
-- Brake intent always cancels positive torque.
-- Regen remains available in all compatible modes.
-- Legitimate safety braking should preserve streak state where possible.
-- Tre Pulse may present braking status but cannot initiate braking.
-
----
-
-## FD-018: Use Binary Brake Intent with Speed-Scheduled Regen
-
-**Status:** `PROPOSED`
-
-### Decision
-
-Use lever-mounted binary Hall sensors to identify rider brake intent. Use speed
-to shape a deterministic regen map, with bounded wheel-speed and IMU feedback.
-
-### Consequences
-
-- Coasting remains distinct from braking.
-- The first generation uses deterministic control.
-- Learning remains observation-only.
-- Hydraulic brakes remain mechanically independent and authoritative.
-
----
-
-## FD-019: Use Recorded Commute Data as the Primary Route Baseline
-
-**Status:** `ACCEPTED`
-
-### Decision
-
-Use the recorded current-bike GPX routes as the primary route baseline.
-
-### Current Baseline
-
-```text
-Recorded moving mass
-    95 kg
-
-Tyres
-    WTB Vulpine 36c
-
-Wheels
-    Aluminium
+Idea or feature branch
+        ↓
+Early draft pull request
+        ↓
+Decision and migration review
+        ↓
+Coherent merge into main
 ```
 
 ### Consequences
 
-- Outbound and return remain separate scenarios.
-- Rider power, wind, battery current, and regen remain assumptions until
-  measured.
-- Older faster road-bike rides remain a comparative lower-drag reference.
+- the Ferrous Hub migration is developed on `idea/ferrous-hub`;
+- the decision log is updated before or alongside implementation documents;
+- draft pull requests carry unresolved questions and migration checklists;
+- implementation work should follow the accepted architecture in focused pull requests;
+- main should not contain a half-migrated architectural story.
 
 ---
 
-## FD-020: Start Coding with Telemetry Trust
+## 2026-09-28: Name the shared interaction language Tre Pulse
 
-**Status:** `ACCEPTED`
+**Status:** Accepted
+
+### Context
+
+Ferrous Drive needs one consistent term for the shared visual and behavioural language used across progress, rewards, state, and future interaction.
 
 ### Decision
 
-Make telemetry trust the first implemented Ferrous Drive concept.
+Use **Tre Pulse** as the project term.
 
-### First Milestone
+Tre Pulse replaces the earlier **Triad Pulse** wording.
 
-- Portable `no_std` core
-- Desktop simulator
-- `heapless` bounded history
-- `Valid`, `Aging`, `Stale`, and `Invalid` signal states
-- Unit tests
-- GitHub Actions verification
+### Consequences
 
-### Why
-
-Every later physiological, braking, battery, and reward feature depends on
-trusted data.
+- new documentation and code should use `Tre Pulse`;
+- historical references may remain when explicitly described as superseded;
+- Trinity Ring becomes the primary local expression of Tre Pulse;
+- terminology checks should prevent accidental reintroduction of the obsolete name.
 
 ---
 
-## Superseded Summary
+## Open decisions
 
-The following earlier directions remain part of project history but are no
-longer the active source of truth:
+The following items remain intentionally unresolved:
 
-- ESP32-S3 as the initial platform
-- Bafang G310 geared-hub baseline
-- Lightweight geared-hub alternative as an active path
-- Four top-level modes
-- Commute as a ride mode
-- Tempo as a top-level mode
-- Fixed Recovery wattage as a universal definition
-- `1.2:1` Recovery baseline
-- Unvalidated `1.4:1` Recovery reward
-- Triad UI Framework and Triad Pulse naming
-- High Assist mode
+- exact 24-LED ring model and voltage;
+- capacitive-touch device for the first prototype;
+- prototype power-rail design;
+- logic-level conversion requirements;
+- exact P2600 control interface, if any;
+- production energy-module connector;
+- module-identification strategy;
+- custom Hub PCB architecture;
+- enclosure and mounting system;
+- ANT+ event representation;
+- CAN transport and message ownership;
+- final gesture mapping;
+- final main drive pack;
+- production commute, recovery, and training parameters.
+
+---
+
+## Superseded directions
+
+### Battery-centred architecture
+
+**Status:** Superseded on 2026-10-06
+
+The battery is no longer treated as the product or the centre of the platform.
+
+Battery development remains important, but now proceeds as interchangeable energy-module work behind the Ferrous Hub boundary.
+
+### Reclaimed ES2 pack as the winter-lighting critical path
+
+**Status:** Superseded on 2026-10-06
+
+The P2600 loaded kit now solves immediate winter lighting. Reclaimed ES2 cells may still support isolated learning, but their uncertain condition means they are no longer a required project step.
+
+---
+
+## Decision review checklist
+
+Before accepting a proposed decision, confirm:
+
+- [ ] The problem and context are clear.
+- [ ] The chosen direction and ownership boundaries are explicit.
+- [ ] Safety implications are recorded.
+- [ ] Positive and negative consequences are included.
+- [ ] Deferred questions are visible.
+- [ ] Experimental values are labelled as assumptions.
+- [ ] Related architecture and roadmap documents are updated.
+- [ ] Historical rationale is preserved.
+- [ ] The repository tells one coherent story.
