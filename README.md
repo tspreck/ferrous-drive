@@ -1,4 +1,4 @@
-# Ferrous Drive 🚲🦀⚙️
+# Ferrous Drive 🚲🦀⚙️🔋
 
 **Rider-oriented Rust cycling-control software built around simulation, validation, and controller-independent design.**
 
