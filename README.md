@@ -1,225 +1,165 @@
-# Ferrous Drive 🚲🦀⚡🔋
+# Ferrous Drive 🚲🦀⚙️
 
-> **Measure the rider. Make progress visible. Reward the right behaviour.**
+**Rider-centred Rust software for deterministic cycling assistance, behavioural feedback, and future e-bike integration.**
 
-Ferrous Drive is an open-source Rust PAS training system built around three
-rider intents: **Neutral, Recovery, and Training**.
+Ferrous Drive is built around simulation, validation, explainable decisions, and hardware-independent core logic. The current architecture is centred on the **Ferrous Hub**, which coordinates Tre Pulse, the Trinity Ring, lighting, local interaction, telemetry, and future drive peripherals.
 
-It uses rider power, heart rate, HRV, route demand, and battery state to
-preserve natural riding, regulate recovery, reward structured work, and learn
-from every ride.
+> **Early development:** architecture, simulation, and Ferrous Hub V0.1 are active. Hardware behaviour remains experimental until validated.
 
-```text
-Simulation first.
-Rider focused.
-Built to learn.
-```
-
-> [!WARNING]
-> Ferrous Drive is in early development. It is not ready to control a ridden
-> bicycle, and no feature should be treated as safety-certified or validated.
-
-## Three Modes
-
-### Neutral
-
-Preserve the natural bicycle.
-
-- Compensate only for penalties introduced by Ferrous Drive
-- Keep rider-triggered regenerative braking available
-- Record useful rider and system data
-- No training game or physiological target
-
-### Recovery
-
-Regulate a personalized Zone 2 workload.
-
-- Start from a conservative `1.0:1` assistance ratio
-- Use trusted HRV, heart-rate, and power trends to adapt toward `1.2:1`
-- Reward physiological discipline and consistency
-- Allow speed to fall before compromising recovery or arrival reserve
-
-### Training
-
-Perform structured work and earn assistance.
-
-- Accumulate valid work
-- Secure Tre Pulse milestones
-- Unlock temporary free speed or recovery support
-- Begin with profiles such as Tempo Tailwind and Anaerobic Shield
-
-## Tre Pulse
-
-**Tre Pulse** is Ferrous Drive's shared visual, behavioural, range, and reward
-language.
-
-It connects:
+## Project mantra
 
 ```text
-Three modes
-    Neutral, Recovery, Training
-
-Three interaction segments
-    State, progress, reward
-
-Three battery-range layers
-    Journey, reserve, contingency
-
-Three physical battery layers
-    7 + 6 + 7
+Reduce friction.
+Build consistency.
+Keep riding.
 ```
 
-Completing three valid Recovery or Training cycles consecutively unlocks the
-**Golden Streak**, extending reward duration without increasing peak assistance
-beyond validated limits.
-
-## Sports-Science-Informed
-
-Recovery and Training concepts have been cross-checked and iteratively refined
-against established endurance-sport practices, including:
-
-- Relative power and heart-rate zones
-- Time in zone
-- Sweet spot
-- Critical Power and W-prime concepts
-- Autoregulatory training
-- HRV-informed readiness and fatigue adaptation
-
-The physiological principles inform the design. Ferrous Drive's scoring,
-reward, and assistance parameters remain experimental until they have been
-simulated and validated with rider data.
-
-## How It Fits Together
+## Architecture
 
 ```mermaid
-flowchart LR
-    Rider[Rider Effort and Physiology]
-    Trust[Telemetry Trust]
-    Pulse[Tre Pulse Engine]
-    Energy[Energy and Arrival Reserve]
-    Arbiter[Torque and Safety Arbiter]
-    Drive[Grin Drive System]
-    Feedback[Ride Feedback]
-
-    Rider --> Trust
-    Trust --> Pulse
-    Pulse --> Energy
-    Energy --> Arbiter
-    Arbiter --> Drive
-    Drive --> Feedback
-    Feedback --> Trust
+flowchart TD
+    EM[Energy Modules] --> FH[Ferrous Hub]
+    FH --> TP[Tre Pulse]
+    FH --> TR[Trinity Ring]
+    FH --> UI[Touch and Indicators]
+    FH --> LT[P2600 and Future Lighting]
+    FH --> TM[Telemetry and Diagnostics]
+    FH --> DI[Future Drive Integration]
+    SF[Brake and Safety Inputs] --> FH
 ```
 
-Tre Pulse may request assistance. Final motor behaviour remains subordinate to:
+### Ferrous Hub owns
 
-- Brake intent
-- Battery protection
-- Motor and controller limits
-- Valid pedalling
-- Trusted telemetry
-- Destination arrival reserve
+- ride-mode and system orchestration;
+- Tre Pulse progress and reward state;
+- Trinity Ring behaviour;
+- capacitive-touch interpretation;
+- lighting coordination;
+- telemetry and diagnostics;
+- power-state coordination;
+- future peripheral and drive interfaces.
 
-## Prototype Direction
+### Energy modules own
+
+- battery chemistry and configuration;
+- BMS and cell-level protection;
+- module electrical and thermal limits;
+- safe charging requirements;
+- optional module telemetry.
+
+## Rider experience
 
 ```text
-Control computer
-    Nordic nRF54L15 DK
+Ride computer
+    Navigation, recording, detailed metrics, post-ride analysis
 
-Language
-    Rust
-
-Runtime direction
-    RTIC investigation
-
-Memory strategy
-    heapless and fixed-capacity data
-
-Motor
-    Grin V3 Rear All-Axle 6T
-
-Controller
-    Headless compatible Grin controller
-
-Battery
-    10S2P Molicel P50B
-    360 Wh nominal
+Trinity Ring
+    Behaviour, progress, state, consistency, and rewards
 ```
 
-## Regenerative Braking
+The goal is to let the rider **ride on feel and review the numbers afterwards**.
 
-Ferrous Drive uses rider-triggered, regen-first braking on compatible
-direct-drive systems.
+## Tre Pulse and Trinity Ring
 
-A brake request immediately cancels positive torque. Regenerative braking is
-then applied within battery, thermal, controller, speed, and rear-wheel limits.
-The bicycle's hydraulic brakes remain mechanically independent and always
-available.
+**Tre Pulse** is the behavioural interaction language of Ferrous Drive. It represents progress, secured milestones, consistency, earned rewards, constraints, warnings, and faults.
 
-## Simulation First
-
-Ferrous Drive should be understandable on a laptop before it controls moving
-hardware.
+The current local-interface direction uses:
 
 ```text
-Input
-    ↓
-Trusted state
-    ↓
-Behaviour and control decision
-    ↓
-Energy and torque constraints
-    ↓
-Explainable trace
+24-LED Trinity Ring
+Dedicated power indicator
+Dedicated ride-mode indicator
+Central capacitive-touch surface
 ```
 
-The first coding milestone is a clean Rust workspace with:
+The proposed ring layout uses three eight-position sectors. Each sector contains seven active progress positions and one normally dark separator.
 
-- A portable `no_std` core
-- A desktop simulator
-- `heapless` bounded data
-- A telemetry trust model
-- Unit tests
-- GitHub Actions verification
+## Current hardware direction
+
+| Element | Direction | Status |
+|---|---|---|
+| Primary development board | Nordic nRF54L15 DK | Selected |
+| Compact prototype option | Adafruit Feather nRF52832 | Investigate |
+| Behaviour display | 24-LED WS2812B or SK6812 ring | V0.1 target |
+| Local input | Capacitive-touch sensor | V0.1 target |
+| Power monitor | INA226 | Optional |
+| Lighting peripheral | P2600 loaded kit | Available |
+
+The P2600 remains a standalone lighting system and is the first serious Ferrous Drive peripheral. P60B energy-module experiments continue as a parallel learning track rather than a prerequisite for Hub development.
+
+## Software structure
+
+```text
+Board-independent core
+├── ride modes
+├── Tre Pulse
+├── reward state
+├── interaction state machine
+├── lighting and power policy
+├── telemetry model
+└── fault policy
+
+Board adapters
+├── LED and touch drivers
+├── timers
+├── BLE and future ANT+
+├── UART and future CAN
+├── sensing
+└── board power control
+```
+
+The core should remain deterministic, `no_std`, heapless where practical, and testable on a host computer.
+
+## Safety priorities
+
+```text
+1. Electrical safety
+2. Brake and assist inhibit
+3. Hardware protection
+4. Energy reserve
+5. Ride-mode intent
+6. Reward delivery
+7. Visual flourish
+```
+
+## Current focus: Ferrous Hub V0.1
+
+- bring up Trinity Ring and touch on the nRF54L15 DK;
+- implement deterministic Hub lifecycle states;
+- demonstrate Tre Pulse progress and rewards;
+- model lighting intent without modifying the P2600;
+- keep core logic separate from board drivers;
+- measure current, brightness, false triggers, and failure behaviour.
+
+## Engineering confidence
+
+```text
+🚲 ROAD TESTED     ▲▲▲▲
+🧪 BENCH TESTED    ▲▲▲
+🎮 SIMULATED       ▲▲
+📐 DESIGNED        ▲
+💡 IDEA
+```
+
+Every major feature should move through design, simulation, validation, build, and road testing before being considered trusted.
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Tre Pulse Engine](docs/tre_pulse_engine.md)
-- [Training Model](docs/training_model.md)
-- [Regenerative Braking](docs/regenerative_braking.md)
-- [Battery Design](docs/battery_design.md)
-- [Decision Log](docs/decision_log.md)
-- [Assumptions](docs/assumptions.md)
-- [Validation Matrix](docs/validation_matrix.md)
-- [Roadmap](docs/roadmap.md)
-- [Changelog](CHANGELOG.md)
+- [`docs/architecture.md`](docs/architecture.md): whole-system architecture
+- [`docs/decision_log.md`](docs/decision_log.md): decisions and rationale
+- [`docs/roadmap.md`](docs/roadmap.md): milestones and priorities
+- [`docs/architecture/ferrous_hub.md`](docs/architecture/ferrous_hub.md): Hub responsibilities and interfaces
+- [`docs/hardware/energy_modules.md`](docs/hardware/energy_modules.md): energy-module boundary
+- [`docs/ui/trinity_ring.md`](docs/ui/trinity_ring.md): Trinity Ring and touch interaction
+- [`docs/peripherals/p2600.md`](docs/peripherals/p2600.md): lighting-peripheral boundary
+- [`docs/planning/ferrous_hub_v0.1.md`](docs/planning/ferrous_hub_v0.1.md): current prototype plan
 
-## Current Priorities
+## Contributing
 
-1. Bootstrap the Rust workspace
-2. Implement telemetry trust
-3. Define the three-mode domain model
-4. Implement the Tre Pulse state engine in simulation
-5. Simulate Recovery before adding physiological hardware
-6. Add Training profiles and Golden Streak only after the shared engine is stable
+Contributions are welcome across Rust, embedded systems, simulation, testing, documentation, power electronics, lighting, interaction design, and ride-data analysis.
 
-## Project Philosophy
+Major architecture changes should use an idea or feature branch and an early draft pull request so the decision history remains reviewable.
 
-```text
-Neutral
-    Preserve
+## License
 
-Recovery
-    Regulate
-
-Training
-    Earn
-
-Tre Pulse
-    Understand
-```
-
-Ferrous Drive does not exist to turn a bicycle into a pedal motorbike.
-
-It exists to make natural riding, consistent recovery, and productive training
-easier to repeat.
+Licensed under the Apache License 2.0.
